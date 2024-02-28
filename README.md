@@ -9,5 +9,6 @@ Integrantes:
 ## Descrição
 O projeto se trata de uma aplicação WEB com CRUD de uma escola.
 
+
 Veja mais informações em: 
 [ProjetoCRUD](/ProjetoCRUD.pdf)
