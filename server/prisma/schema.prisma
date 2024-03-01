@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Aluno {
+  id        Int    @id @default(autoincrement())
+  matricula String @unique
+  cpf       String @unique
+  nome      String
+  serie     Int?
+
+  @@map("alunos")
+}
+
+// model Disciplina {
+//   id        Int      @id @default(autoincrement())
+//   nome      String
+//   professor String
+// }
+
+// model Historico {
+//   id        Int      @id @default(autoincrement())
+//   aluno     Aluno    @relation(fields: [alunoId], references: [id])
+//   alunoId   Int
+//   disciplinas Disciplina[]
+//   created   DateTime @default(now())
+//   updated   DateTime @updatedAt  
+// }
