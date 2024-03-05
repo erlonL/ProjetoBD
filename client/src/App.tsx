@@ -1,53 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Link, useRoutes, Navigate } from 'react-router-dom';
 
+import ListAlunos from './ListAlunos';
+import InitialPage from './InitialPage';
 
 function App() {
 
-  const [Alunos, setAlunos] = useState([{}])
+  const [nav, setNav] = useState('');
 
-  
+  const location = useLocation();
 
   useEffect(() => {
-    fetch('/api/listAlunos').then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      setAlunos(data);
-    })
-    .catch(error => {
-      console.error('There has been a problem with your fetch operation:', error);
-    });
-  }, []);
+    setNav(location.pathname);
+  }, [location]);
+
 
   return (
-    <div className='bg-gradient-to-br from-purple-600 to-blue-600 h-screen w-screen overflow-hidden'>
-      <div className='flex justify-center top-5 w-auto bg-slate-50'>
-        <span className='font-sans text-4xl font-bold py-4'>ESCOLA CONCEIÇÃO DA SILVA</span>
+    <>
+      {/* // BODY */}
+      <div className='bg-gradient-to-br from-purple-600 to-blue-600 h-screen w-screen overflow-hidden flex-column justify-center items-center'>
+
+        {/* HEADER */}
+        <div className='flex w-screen justify-center bg-slate-50 m-0 '>
+          <span className='font-sans text-4xl font-bold py-4'>ESCOLA CONCEIÇÃO DA SILVA</span>
+        </div>
+
+        {/* NAV WRAPPER */}
+        <div className='flex flex-row justify-center items-center h-screen'>
+          <Routes>
+            <Route path='/' element={<InitialPage/>} />
+            <Route path='/listAlunos' element={<ListAlunos />} />
+            <Route path='/addAluno' element={<h1>ADD ALUNO</h1>} />
+            <Route path='/updAluno' element={<h1>UPD ALUNO</h1>} />
+            <Route path='/rmvAluno' element={<h1>RMV ALUNO</h1>} />
+          </Routes>
+
+
+
+        </div>
       </div>
-
-      <div className='flex flex-row items-center justify-between my-44'>
-          <div key={'listAlunos'} className='flex items-center mx-5 bg-white cursor-pointer select-none h-16 rounded-3xl'>
-            <p className='text-base mx-4'>LISTAR ALUNOS</p>
-          </div>
-
-        {[
-          ['addAluno', 'ADICIONAR ALUNO'],
-          ['updAluno', 'ATUALIZAR ALUNO'],
-          ['rmvAluno', 'REMOVER ALUNO'],
-
-        ].map(([key, text]) => (
-          <div key={key} className='flex items-center mx-5 bg-white cursor-pointer select-none h-16 rounded-3xl'>
-            <p className='text-base mx-4'>{text}</p>
-          </div>
-        ) )
-        }
-
-      </div>
-    </div>
+    </>
   );
 }
 

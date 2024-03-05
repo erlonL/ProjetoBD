@@ -5,6 +5,15 @@ export default {
     async createAluno(req: Request, res: Response) {
         try{
             const { nome, cpf, serie } = req.body;
+
+            const alunoExists = await prisma.aluno.findFirst({ where: { cpf } });
+
+            if(alunoExists){
+                return res.status(400).json({
+                    error: true,
+                    message: "Aluno já cadastrado"
+                })
+            }
             
             const data = {
                 nome,
@@ -31,8 +40,26 @@ export default {
     },
     async listAlunos(req: Request, res: Response) {
         try{
-            const alunos = await prisma.aluno.findMany();
-            return res.json(alunos);
+            const { page = 1 } = req.query;
+            const limit = 10;
+
+            // Paginação
+            const alunos = await prisma.aluno.findMany({
+                skip: (Number(page) - 1) * limit,
+                take: limit
+            });
+
+            // const alunos = await prisma.aluno.findMany();
+
+            const data = alunos.map((aluno) => {
+                return {
+                    matricula: aluno.matricula,
+                    nome: aluno.nome,
+                    serie: aluno.serie
+                }
+            });
+
+            return res.json(data);
         }catch(error: any){
             return res.status(400).json({
                 error: true,
@@ -124,6 +151,7 @@ export default {
     async createAlunoMany(req: Request, res: Response) {
         try{
             const alunos = req.body;
+
             const data = alunos.map((aluno: any) => {
                 return {
                     nome: aluno.nome,
@@ -132,6 +160,17 @@ export default {
                     matricula : ("20240" + Math.floor(Math.random() * 1000).toString())
                 }
             });
+
+            for(let i = 0; i < data.length; i++){
+                const alunoExists = await prisma.aluno.findFirst({ where: { cpf: data[i].cpf } });
+
+                if(alunoExists){
+                    return res.status(400).json({
+                        error: true,
+                        message: "Algum aluno já foi cadastrado"
+                    })
+                }
+            }
 
             const result = await prisma.aluno.createMany({
                 data
