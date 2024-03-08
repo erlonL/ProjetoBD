@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from 'react';
-
 const setNav = (nav: string) => {
     window
         .location

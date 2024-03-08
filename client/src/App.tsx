@@ -8,13 +8,7 @@ import InitialPage from './InitialPage';
 
 function App() {
 
-  const [nav, setNav] = useState('');
 
-  const location = useLocation();
-
-  useEffect(() => {
-    setNav(location.pathname);
-  }, [location]);
 
 
   return (
@@ -24,7 +18,9 @@ function App() {
 
         {/* HEADER */}
         <div className='flex w-screen justify-center bg-slate-50 m-0 '>
-          <span className='font-sans text-4xl font-bold py-4'>ESCOLA CONCEIÇÃO DA SILVA</span>
+          <a href='/' className='flex flex-row justify-center items-center'>
+            <span className='font-sans text-4xl font-bold py-4'>ESCOLA CONCEIÇÃO DA SILVA</span>
+          </a>
         </div>
 
         {/* NAV WRAPPER */}
