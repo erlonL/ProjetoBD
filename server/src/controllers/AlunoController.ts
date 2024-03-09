@@ -210,6 +210,34 @@ export default {
             })
         }
     },
+    async totalAlunos(req: Request, res: Response) {
+        const { serie } = req.query;
+        if (serie === 'ALL'){
+            try{
+                const total = await prisma.aluno.count();
+
+                return res.json(total);
+            }catch(error: any){
+                return res.status(400).json({
+                    error: true,
+                    message: error.message
+                })
+            }
+        }
+        try{
+            const total = await prisma.aluno.count({
+                where: {
+                    serie: serie as Serie
+                }
+            });
+            return res.json(total);
+        }catch(error: any){
+            return res.status(400).json({
+                error: true,
+                message: error.message
+            })
+        }
+    },
     // async createAlunoMany(req: Request, res: Response) {
     //     try{
     //         const alunos = req.body;
