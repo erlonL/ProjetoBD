@@ -21,7 +21,7 @@ app.delete('/api/deleteAluno/:id', AlunoController.deleteAluno);
 
 app.delete('/api/deleteAlunobymatricula/:matricula', AlunoController.deleteAlunoByMatricula);
 
-app.post('/api/createAlunoMany', AlunoController.createAlunoMany);
+// app.post('/api/createAlunoMany', AlunoController.createAlunoMany);
 
 app.listen(PORT, () => {
     return console.log(`server is listening on ${PORT}`);

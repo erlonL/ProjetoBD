@@ -18,9 +18,24 @@ model Aluno {
   matricula String @unique
   cpf       String @unique
   nome      String
-  serie     Int?
+  serie     Serie
 
   @@map("alunos")
+}
+
+enum Serie {
+  F1
+  F2
+  F3
+  F4
+  F5
+  F6
+  F7
+  F8
+  F9
+  M1
+  M2
+  M3
 }
 
 // model Disciplina {
