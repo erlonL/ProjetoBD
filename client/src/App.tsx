@@ -88,7 +88,7 @@ function App() {
 
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
-  const [serie, setSerie] = useState('');
+  const [serie, setSerie] = useState(Series[1]['value']);
 
   const [updNome, setUpdNome] = useState('');
   const [updCpf, setUpdCpf] = useState('');
@@ -489,7 +489,6 @@ function App() {
                       className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] text-black font-serif text-lg' />
 
                       <select id='input-serie'
-
                       className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] font-serif text-lg text-black' 
                       value={serie} 
                       onChange={(e) => {

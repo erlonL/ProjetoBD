@@ -13,16 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Aluno {
-  id        Int    @id @default(autoincrement())
-  matricula String @unique
-  cpf       String @unique
-  nome      String
-  serie     Serie
-
-  @@map("alunos")
-}
-
 enum Serie {
   F1
   F2
@@ -37,6 +27,17 @@ enum Serie {
   M2
   M3
 }
+
+model Aluno {
+  id        Int    @id @default(autoincrement())
+  matricula String @unique
+  cpf       String @unique
+  nome      String
+  serie     Serie
+
+  @@map("alunos")
+}
+
 
 // model Disciplina {
 //   id        Int      @id @default(autoincrement())
