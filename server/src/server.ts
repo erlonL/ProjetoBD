@@ -1,9 +1,14 @@
 import express from 'express';
+const bodyParser = require('body-parser');
 import AlunoController from './controllers/AlunoController';
 
 const app = express();
-app.use(express.json());
+// app.use(express.json());
+
 const PORT = 8000;
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get('/api', (request, response) => {
     response.send('Hello World');
@@ -21,8 +26,6 @@ app.delete('/api/deleteAluno', AlunoController.deleteAluno);
 
 app.get('/api/totalAlunos', AlunoController.totalAlunos);
 
-// app.post('/api/createAlunoMany', AlunoController.createAlunoMany);
-
 app.listen(PORT, () => {
-    return console.log(`server is listening on ${PORT}`);
-})
+    console.log('Server is running on port PORT');
+});
