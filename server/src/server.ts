@@ -13,13 +13,11 @@ app.post('/api/createAluno', AlunoController.createAluno);
 
 app.get('/api/listAlunos', AlunoController.listAlunos);
 
-app.get('/api/findAluno/:matricula', AlunoController.findAluno);
+app.get('/api/Aluno/:matricula', AlunoController.findAluno);
 
 app.put('/api/updateAluno/:matricula', AlunoController.updateAluno);
 
-app.delete('/api/deleteAluno/:id', AlunoController.deleteAluno);
-
-app.delete('/api/deleteAlunobymatricula/:matricula', AlunoController.deleteAlunoByMatricula);
+app.delete('/api/deleteAluno', AlunoController.deleteAluno);
 
 app.get('/api/totalAlunos', AlunoController.totalAlunos);
 

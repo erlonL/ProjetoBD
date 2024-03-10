@@ -171,28 +171,31 @@ export default {
     },
     async deleteAluno(req: Request, res: Response) {
         try{
-            const { id } = req.params;
-            
-            await prisma.aluno.delete({
-                where: {
-                    id: Number(id)
-                }
-            });
+            const { matricula } = req.query;
+            const { id = null } = req.query;
 
-            return res.json({
-                error: false,
-                message: "Aluno deletado com sucesso"
-            })
-        }catch(error: any){
-            return res.status(400).json({
-                error: true,
-                message: error.message
-            })
-        }
-    },
-    async deleteAlunoByMatricula(req: Request, res: Response) {
-        try{
-            const { matricula } = req.params;
+            const alunoExists = await prisma.aluno.findUnique({ where: { matricula: matricula as string } });
+
+            if(!alunoExists){
+                return res.status(400).json({
+                    error: true,
+                    message: "Aluno não encontrado"
+                })
+            }
+
+            if(id){
+                await prisma.aluno.delete({
+                    where: {
+                        id: Number(id)
+                    }
+                });
+
+                return res.json({
+                    error: false,
+                    message: "Aluno deletado com sucesso"
+                })
+            }
+
             await prisma.aluno.delete({
                 where: {
                     matricula: matricula as string

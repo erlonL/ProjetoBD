@@ -7,7 +7,55 @@ import Button from './components/Button';
 
 Modal.setAppElement('#root');
 
+const _images = require.context('./img', true);
+const _imageList = _images.keys().map(_images);
+
+const Images = {
+  atualizar: _imageList[0],
+  cancelar: _imageList[1],
+  lista: _imageList[2],
+  lixo: _imageList[3],
+  ok: _imageList[4],
+  salvar: _imageList[5],
+  github: _imageList[6]
+}
+
+
 function App() {
+  const modalStyles: Modal.Styles = {
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      zIndex: '99999',
+      display: 'flex',
+      justifyContent: 'center',
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100vw',
+      height: '100vh',
+      overflowY: 'auto',
+    },
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      // background: 'linear-gradient(180deg, rgba(163, 230, 53, 1), rgba(168, 85, 247, 0.7))',
+      background: 'linear-gradient(120deg, rgba(71, 85, 105, 1), rgba(177,177,177, 1))',
+      // backgroundColor: 'rgba(71, 85, 105, 1)',
+      zIndex: '99999',
+      color: 'white',
+      border: '3px solid #000',
+      borderRadius: '10px',
+      width: '50%',
+      height: '50%',
+      padding: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+    }
+  };
 
   const Series = [
     { value: 'ALL', label: 'Todos' },
@@ -42,6 +90,11 @@ function App() {
   const [cpf, setCpf] = useState('');
   const [serie, setSerie] = useState('');
 
+  const [updNome, setUpdNome] = useState('');
+  const [updCpf, setUpdCpf] = useState('');
+  const [updSerie, setUpdSerie] = useState('');
+  const [updMatricula, setUpdMatricula] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
 
@@ -49,7 +102,7 @@ function App() {
 
   const empty = ((Alunos === null) || (Alunos.length === 0) || (Object.keys(Alunos[0]).length === 0)) ? true : false;
 
-  const nextEnabled = Alunos.length < 12;
+  const nextEnabled = (totalAlunos - ((page - 1) * 12)) <= 12;
 
   const handleTotalAlunosRequest = async (serie: string) => {
     try {
@@ -71,7 +124,7 @@ function App() {
   const clearForms = () => {
     setNome('');
     setCpf('');
-    setSerie('');
+    setSerie(Series[1]['value']);
   };
 
   const handleAddAlunoRequest = async (data: any) => {
@@ -153,35 +206,236 @@ function App() {
     setModalIsOpen(false);
   };
 
+  const handleDeleteAlunoRequest = async (matricula: string) => {
+    try {
+      console.log('ENVIANDO REQUISIÇÃO DE DELEÇÃO...')
+      const response = await fetch(`/api/deleteAluno?matricula=${matricula}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseJSON = await response.json();
+      console.log(responseJSON);
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('ALUNO DELETADO.');
+    }
+  
+  }
+
+  const handleUpdateAlunoRequest = async (matricula: string, data: any) => {
+    try {
+      console.log('ENVIANDO REQUISIÇÃO DE ATUALIZAÇÃO...')
+      const response = await fetch(`/api/updateAluno/${matricula}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseJSON = await response.json();
+      console.log(responseJSON);
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('ALUNO ATUALIZADO.');
+    }
+  
+  }
+
   useEffect(() => {
     handleRequest();
+    setSaveOption(false);
+    setShowConfirm(false);
   }, [page, filterSelectedSeries]);
+
 
   useEffect(() => {
     handleTotalAlunosRequest(filterSelectedSeries);
   }, [filterSelectedSeries]);
 
-  const handleRowClick = (matricula: string) => {
-    setSelectedMatricula(matricula);
-    setSaveOption(true);
-    setShowConfirm(false);
-    // setEnableOtherRowsEdit(false);
+  const [renderOption, setRenderOption] = useState('default');
+
+  const [InfoModalIsOpen, setInfoModalIsOpen] = useState(false);
+
+  const CloseInfoModal = (e: any) => {
+    e.stopPropagation();
+    setInfoModalIsOpen(false);
+  };
+
+  const OpenInfoModal = () => {
+    setInfoModalIsOpen(true);
+  };
+
+  useEffect(() => {
+    if(SaveOption){
+      setRenderOption('save');
+    } else if(ShowConfirm){
+      setRenderOption('delete');
+    } else {
+      setRenderOption('default');
+    }
+  }, [SaveOption, ShowConfirm]);
+
+  const [AlunoModalInfo, setAlunoModalInfo] = useState({cpf: '', nome: '', serie: '', matricula: ''});
+
+  useEffect(() => {
+    setUpdCpf(AlunoModalInfo['cpf']);
+    setUpdNome(AlunoModalInfo['nome']);
+    setUpdSerie(AlunoModalInfo['serie']);
+    setUpdMatricula(AlunoModalInfo['matricula']);
+  }, [AlunoModalInfo]);
+
+  const handleAlunoInfoRequest = async (matricula: string) => {
+    try {
+      console.log(`Requesting ${matricula} info...`);
+      const response = await fetch(`/api/Aluno/${matricula}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setAlunoModalInfo(data);
+      console.log(data);
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('Request completed');
+    }
+  }
+
+  const Options: React.FC<{ renderOption: string, aluno: any; }> = ({ renderOption, aluno }) => {
+    switch(renderOption)
+    {
+      case 'delete':
+        if(SelectedMatricula === aluno.matricula){
+          return <></>;
+        }
+        return <>{console.log('ERRO EM DELETE')}</>
+        break;
+        default:
+          return <></>;
+    }
   }
 
   return (
     <div className='bg-gradient-to-br from-purple-600 to-blue-600 h-screen w-screen flex-col'>
+
+      <Modal style={modalStyles}
+        isOpen={InfoModalIsOpen}
+        onRequestClose={CloseInfoModal}
+        contentLabel='EXAMPLE'
+        shouldCloseOnEsc={true}
+        shouldCloseOnOverlayClick={false}
+        >
+          <h2 className='text-center font-bold text-3xl top-[0]'>INFORMAÇÕES DO ALUNO</h2>
+          <div className='flex flex-col w-[70%] h-[70%]'>
+            <label> {updMatricula} </label>
+            <form className='flex flex-row'>
+              <div className='flex flex-col justify-evenly items-end'>
+                <div>
+                  <label className='text-xl font-serif'>
+                    Nome
+                  </label>
+                  <input id='input-nome' 
+                    value={updNome} 
+                    type="text" 
+                    placeholder='Ex.: José da Silva'
+                    onChange={(e) => setUpdNome(e.target.value)}
+                    className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] text-black font-serif text-lg' 
+                  /> 
+                </div>
+
+                <div>
+                  <label className='text-xl font-serif'>
+                    CPF
+                  </label>
+                  <input id='input-cpf' 
+                    value={updCpf}
+                    type="text" 
+                    placeholder='Ex.: 000.000.000-01'
+                    onChange={(e) => setUpdCpf(e.target.value)}
+                    className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] text-black font-serif text-lg' 
+                  />
+                </div>
+
+                <div>
+                  <label className='text-xl font-serif'>
+                    Série
+                  </label>
+                  <select id='input-serie'
+                    className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] font-serif text-lg text-black' 
+                    value={updSerie} 
+                    onChange={(e) => { setUpdSerie(e.target.value); }}>
+                      {Series.slice(1).map((serieObj) => (
+                        <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
+                          {serieObj['label']}
+                        </option>
+                      ))}
+                  </select>
+
+                </div>
+
+              </div>
+            </form>
+          </div>
+          <div className='flex flex-row justify-evenly'>
+          <button className='w-[20vw] bg-slate-200 p-2 m-2 rounded-lg text-black'
+            disabled={((isLoading) || (buttonClicked))}
+            onClick={(e) => {
+              e.preventDefault();
+              clearForms();
+              CloseInfoModal(e);
+            }}>
+              Fechar
+            </button>
+            <button className='w-[20vw] bg-slate-200 p-2 m-2 rounded-lg text-black' 
+            disabled={((isLoading) || (buttonClicked))}
+            onClick={(e) => {
+              e.preventDefault();
+              console.log(`Updating alunoInfo ${updMatricula}`);
+              const data = { nome: updNome, cpf: updCpf, serie: updSerie};
+              console.log(data);
+              
+              handleUpdateAlunoRequest(updMatricula, data).then(
+                () => {
+                  handleRequest();
+                  handleTotalAlunosRequest(filterSelectedSeries);
+                  clearForms();
+                  CloseInfoModal(e);
+                }
+              );
+            }}>
+              Atualizar
+            </button>
+          </div>
+      </Modal>
+
+      {/* HEADER */}
       <div className='flex w-screen h-20 justify-center bg-slate-50 top-0' id='header'>
         <span className='text-4xl font-bold py-4'>ESCOLA CONCEIÇÃO DA SILVA</span>
       </div>
 
+      {/* TABLE WRAPPER */}
       <div className='flex flex-col justify-center items-center w-full' id='TableWrapper'>
+        {/* TABLE HEADER */}
         <div className='pb-4 pt-4 w-full justify-center text-center'>
           <h2 className='text-3xl font-serif'>Lista de Alunos</h2>
         </div>
 
+        {/* TABLE */}
         <div className='bg-yellow-500 justify-center items-center w-[72vw] h-[72vh] mb-[10vh] flex flex-col' id='AlunosTable'>
 
+          {/* TABLE HEADER */}
           <div className='flex w-full'>
+            {/* TABLE FILTER */}
             <div id='select-label' className='flex-col justify-center items-center'>
               <label htmlFor="" className='pl-3 font-bold font-sans text-xl'>FILTRO POR SÉRIE</label>
                 <select className='bg-slate-200 p-4 m-2 rounded-lg w-[16vw] h-[8vh] ml-4 self-start' 
@@ -193,45 +447,10 @@ function App() {
                   ))}
                 </select>
             </div>
-            <button className='bg-slate-200 p-2 m-2 rounded-lg w-[4vw] h-[8vh] ml-auto'>
-              UPDT
-            </button>
+            {/* ADD ALUNO BUTTON */}
             <button className='bg-slate-200 p-2 m-2 rounded-lg w-[16vw] h-[8vh] ml-auto' onClick={OpenModal}>
               <p className='font-bold font-sans'>ADICIONAR ALUNO</p>
-              <Modal style={{
-                overlay: {
-                  backgroundColor: 'rgba(0, 0, 0, 0)',
-                  zIndex: '99999',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  position: 'fixed',
-                  top: '0',
-                  left: '0',
-                  width: '100vw',
-                  height: '100vh',
-                  overflowY: 'auto'
-                },
-                content: {
-                  top: '50%',
-                  left: '50%',
-                  right: 'auto',
-                  bottom: 'auto',
-                  marginRight: '-50%',
-                  transform: 'translate(-50%, -50%)',
-                  // background: 'linear-gradient(180deg, rgba(163, 230, 53, 1), rgba(168, 85, 247, 0.7))',
-                  background: 'linear-gradient(120deg, rgba(71, 85, 105, 1), rgba(177,177,177, 1))',
-                  // backgroundColor: 'rgba(71, 85, 105, 1)',
-                  zIndex: '99999',
-                  color: 'white',
-                  border: '3px solid #000',
-                  borderRadius: '10px',
-                  width: '50%',
-                  height: '50%',
-                  padding: '20px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }
-              }}
+              <Modal style={modalStyles}
               isOpen={ModalIsOpen}
               onRequestClose={CloseModal}
               contentLabel='EXAMPLE'
@@ -241,7 +460,7 @@ function App() {
                 <h2 className='text-center font-bold text-3xl top-[0]'>ADICIONAR ALUNO</h2>
 
                 <div className='flex flex-col w-[70%] h-[70%]'>
-                  <label> FORMS </label>
+                  <label> INFORMAÇÕES </label>
                   <form className='flex flex-row'>
                     <div className='flex flex-col justify-evenly space-y-4 items-end'>
                       <label className='text-xl font-serif'>
@@ -295,27 +514,34 @@ function App() {
                     clearForms();
                     CloseModal(e);
                   }}>
-                    Close
+                    Fechar
                   </button>
                   <button className='w-[20vw] bg-slate-200 p-2 m-2 rounded-lg text-black' 
                   disabled={((isLoading) || (buttonClicked))}
                   onClick={(e) => {
-                    e.preventDefault();
+                    // e.preventDefault();
                     console.log('Saving new aluno...');
                     const data = { nome, cpf, serie };
                     console.log(data);
 
-                    handleAddAlunoRequest(data);
-                    clearForms();
+                    handleAddAlunoRequest(data).then(
+                      () => {
+                        handleRequest();
+                        handleTotalAlunosRequest(filterSelectedSeries);
+                        // CloseModal(e);
+                        clearForms();
+                      }
+                    );
                   }}>
-                    Save
+                    Salvar
                   </button>
                 </div>
               </Modal>
             </button>
           </div>
-
-          <div className='flex flex-col justify-between h-3/4 w-[90%] bg-slate-400 overflow-scroll overflow-x-hidden' id='AlunosWrapper'>
+          
+          {/* TABLE CONTENT */}
+          <div className='flex flex-col justify-between h-3/4 w-[90%] bg-slate-400 overflow-y-scroll sm:overflow-x-scroll' id='AlunosWrapper'>
             <table>
               <thead>
                 <tr>
@@ -331,68 +557,64 @@ function App() {
                     <td colSpan={3} className='text-base'>Nenhum aluno encontrado</td>
                   </tr>
                 ) : (
+                  console.log('ALUNOS:', Alunos),
                   Alunos.map((aluno: any) => (
                     <tr className='justify-center items-center' key={aluno.matricula}>
-                      <td onClick={() => handleRowClick(aluno.matricula)} contentEditable="true" className='text-base border text-center'>{aluno.nome}</td>
-                      <td onClick={() => handleRowClick(aluno.matricula)} contentEditable="true" className='text-base border text-center'>{aluno.matricula}</td>
-                      <td onClick={() => handleRowClick(aluno.matricula)} contentEditable="true" className='text-base border text-center'>{aluno.serie}</td>
+                      <td className='text-base border text-center'>{aluno.nome}</td>
+                      <td className='text-base border text-center'>{aluno.matricula}</td>
+                      <td className='text-base border text-center'>{aluno.serie}</td>
                       <td className='flex flex-row w-full h-[12vh] justify-center'>
                         {
-                          ShowConfirm && SelectedMatricula === aluno.matricula? (
+                          (renderOption === 'delete') && (SelectedMatricula === aluno.matricula) ? 
+                          <>
                             <div className='flex flex-col justify-center items-center'>
                               <label className='text-base font-bold'>Deletar aluno?</label>
                               <div className='flex flex-row justify-center items-center'>
                                 <button className='h-[32px] w-[32px] bg-green-400 rounded-3xl mx-1' onClick={() => {
-                                  setShowConfirm(!ShowConfirm);
+                                  handleDeleteAlunoRequest(aluno.matricula).then(
+                                    () => {
+                                      handleRequest();
+                                      handleTotalAlunosRequest(filterSelectedSeries);
+                                      setShowConfirm(!ShowConfirm);
+                                    }
+                                  );
                                   console.log('Confirmando deleção...');
                                 }}>
-                                  <img className='w-full h-full' src={require('./img/ok.png')} alt="Confirmar" />
+                                  <img className='w-full h-full' src={Images.ok as string} alt="Confirmar" />
                                 </button>                           
                                 <button className='h-[32px] w-[32px] bg-red-400 rounded-3xl mx-1' onClick={() => {
                                   setShowConfirm(!ShowConfirm);
                                   console.log('Cancelando deleção...');
                                 }}>
-                                  <img className='w-full h-full' src={require('./img/cancelar.png')} alt="Cancelar" />
+                                  <img className='w-full h-full' src={Images.cancelar as string} alt="Cancelar" />
                                 </button>
                               </div>
                             </div>
-                          ) :
-                          SaveOption && SelectedMatricula === aluno.matricula ? (
-                            <div className='flex flex-col justify-center items-center'>
-                              <label className='text-base font-bold'>Salvar alterações?</label>
-                              <div className='flex flex-row justify-center items-center'>
-                                <button className='h-[32px] w-[32px] bg-slate-200 rounded-lg mx-1' onClick={() => {
-                                  setSaveOption(!SaveOption);
-                                  // setEnableOtherRowsEdit(true);
-                                  console.log('Salvando alterações...');
-                                }}>
-                                  <img className='w-full h-full' src={require('./img/salvar.png')} alt="salvar" />
-                                </button>
-                                <button className='h-[32px] w-[32px] bg-slate-200 rounded-3xl mx-1' onClick={() => {
-                                  setSaveOption(!SaveOption);
-                                  // setEnableOtherRowsEdit(true);
-                                  console.log('Cancelando alterações...');
-                                }}>
-                                  <img className='w-full h-full' src={require('./img/cancelar.png')} alt="cancelar" />
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
+                          </> :
+
+                          <>
                             <div className='flex flex-row mx-4 justify-center items-center'>
                               <button className='bg-slate-200 w-[2vw] h-[4vh] mx-1 my-2 rounded-lg' onClick={() => {
-                                console.log('Visualizando aluno...');
+                                handleAlunoInfoRequest(aluno.matricula).then(
+                                  () => {
+                                    OpenInfoModal();
+                                  }
+                                )
                               }}>
-                                <img className='w-full h-full' src={require('./img/lista.png')} alt="info" />
+                                <img className='w-full h-full' src={Images.lista as string} alt="info" />
                               </button>
-                              <button className='bg-slate-200 w-[2vw] h-[4vh] mx-1 my-2 rounded-lg' onClick={() => {
-                                setShowConfirm(!ShowConfirm);
+                              <button className='bg-slate-200 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                                setSelectedMatricula(aluno.matricula);
+                                setSaveOption(false);
+                                setShowConfirm(true);
                                 console.log('Deletando aluno...');
                               }} >
-                                <img className='w-full h-full' src={require('./img/lixo.png')} alt="delete" />
+                                <img className='w-full h-full' src={Images.lixo as string} alt="delete" />
                               </button>
                             </div>
-                          )
+                          </>
                         }
+                        <Options renderOption={renderOption} aluno={aluno} />
                       </td>
                     </tr>
                   ))
@@ -401,29 +623,45 @@ function App() {
             </table>
           </div>
 
+          {/* TABLE FOOTER */}
           <div className='flex flex-row justify-center w-full'>
             <div className='flex flex-col justify-center items-start ml-2'>
               <span className='text-center mt-4 ml-2'>
-                <p className=' text-sm font-bold font-serif'>Page: {page}</p>
+                <p className=' text-sm font-bold font-serif'>Página: {page}</p>
               </span>
               <span className='text-center ml-2'>
-                <p className='text-sm font-bold font-serif'>Viewing: {Object.keys(Alunos[0]).length === 0 ? 0 : Alunos.length} / {page === 1 ? totalAlunos : totalAlunos - ((page - 1) * 12)} </p>
+                <p className='text-sm font-bold font-serif'>{Object.keys(Alunos[0]).length === 0 ? 0 : Alunos.length} / {page === 1 ? totalAlunos : totalAlunos - ((page - 1) * 12)} </p>
               </span>
             </div>
+
+            <div className='ml-auto flex flex-row items-center justify-center'>
+              <div className='p-2'>
+                <button className='bg-slate-200 m-1 p-1 rounded-lg w-[2.5vw] h-[5vh]'
+                onClick={() => {
+                  setAlunos([{}]);
+                  handleRequest();
+                  setShowConfirm(false);
+                  setSaveOption(false);
+                  clearForms();
+                  console.log('ATUALIZANDO TABELA...')
+                }}>
+                  <img className='w-full h-full' src={Images.atualizar as string} alt="Atualizar"/>
+                </button>
+              </div>
+
+              <div>
+                <button id='PREVIOUS-BTN' className='bg-slate-200 p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={page === 1} onClick={() => {
+                  handlePreviousPageRequest();
+                }}>
+                  Anterior
+                </button>
+                <button id='NEXT-BTN' className='bg-slate-200 p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={nextEnabled} onClick={() => {
+                  handleNextPageRequest();
+                }}>
+                  Próxima
+                </button>
+              </div>
             
-            <div className='ml-auto'>
-              <button id='PREVIOUS-BTN' className='bg-slate-200 p-2 m-2 rounded-lg' disabled={page === 1} onClick={() => {
-                handlePreviousPageRequest();
-                
-                // page > 1 ? setPage(page - 1) : null;
-              }}>
-                Anterior
-              </button>
-              <button id='NEXT-BTN' className='bg-slate-200 p-2 m-2 rounded-lg' disabled={nextEnabled} onClick={() => {
-                handleNextPageRequest();
-              }}>
-                Próxima
-              </button>
             </div>
           </div>
 
@@ -436,11 +674,25 @@ function App() {
         </div>
       </div>
       
-      <div className='flex w-screen h-20 justify-center bg-slate-50' id='footer'>
-        <span className='text-4xl font-bold py-4'></span>
+      {/* FOOTER */}
+      <div className='flex w-screen justify-center items-center bg-slate-600' id='footer'>
+        <div className='w-[12vw] h-[8vh] flex justify-center items-center bg-gradient-to-b from-[#4157EB] to-slate-600 rounded-3xl'>
+          {/* <span className='text-4xl font-bold py-4 justify-center items-center flex flex-col'> */}
+          <div className='w-[140px] h-[50px] justify-center items-center flex bg-slate-200 rounded-3xl z-10'>
+            <a href="https://github.com/erlonl/"
+            className='flex flex-row justify-center items-center w-full h-full rounded-3xl'>
+              <img 
+              src={Images.github as string} 
+              alt="github logo"
+              className='w-full h-full object-contain'
+              />
+              <span className='font-mono text-base -ml-4 pl-6 pr-6 py-2 rounded-r-3xl'>erlonl</span>
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
 
+    </div>
   );
 }
 
