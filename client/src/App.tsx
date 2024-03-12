@@ -88,7 +88,7 @@ function App() {
 
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
-  const [serie, setSerie] = useState('');
+  const [serie, setSerie] = useState(Series[1]['value']);
 
   const [updNome, setUpdNome] = useState('');
   const [updCpf, setUpdCpf] = useState('');
@@ -326,8 +326,7 @@ function App() {
   }
 
   return (
-    <div className='bg-gradient-to-br from-purple-600 to-blue-600 h-screen w-screen flex-col'>
-
+    <div className='bg-gradient-to-t bg-[#353535] justify-center items-center h-full w-full flex flex-col'>
       <Modal style={modalStyles}
         isOpen={InfoModalIsOpen}
         onRequestClose={CloseInfoModal}
@@ -349,7 +348,7 @@ function App() {
                     type="text" 
                     placeholder='Ex.: José da Silva'
                     onChange={(e) => setUpdNome(e.target.value)}
-                    className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] text-black font-serif text-lg' 
+                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' 
                   /> 
                 </div>
 
@@ -362,7 +361,7 @@ function App() {
                     type="text" 
                     placeholder='Ex.: 000.000.000-01'
                     onChange={(e) => setUpdCpf(e.target.value)}
-                    className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] text-black font-serif text-lg' 
+                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' 
                   />
                 </div>
 
@@ -371,7 +370,7 @@ function App() {
                     Série
                   </label>
                   <select id='input-serie'
-                    className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] font-serif text-lg text-black' 
+                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' 
                     value={updSerie} 
                     onChange={(e) => { setUpdSerie(e.target.value); }}>
                       {Series.slice(1).map((serieObj) => (
@@ -387,7 +386,7 @@ function App() {
             </form>
           </div>
           <div className='flex flex-row justify-evenly'>
-          <button className='w-[20vw] bg-slate-200 p-2 m-2 rounded-lg text-black'
+          <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg'
             disabled={((isLoading) || (buttonClicked))}
             onClick={(e) => {
               e.preventDefault();
@@ -396,7 +395,7 @@ function App() {
             }}>
               Fechar
             </button>
-            <button className='w-[20vw] bg-slate-200 p-2 m-2 rounded-lg text-black' 
+            <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg' 
             disabled={((isLoading) || (buttonClicked))}
             onClick={(e) => {
               e.preventDefault();
@@ -418,37 +417,38 @@ function App() {
           </div>
       </Modal>
 
+
       {/* HEADER */}
-      <div className='flex w-screen h-20 justify-center bg-slate-50 top-0' id='header'>
-        <span className='text-4xl font-bold py-4'>ESCOLA CONCEIÇÃO DA SILVA</span>
+      <div className='w-screen py-4 h-[20%] justify-center items-center top-0 text-center bg-[#25455B]' id='header'>
+        <span className='text-4xl font-bold py-4 text-[#FFFFFF]'>ESCOLA CONCEIÇÃO DA SILVA</span>
       </div>
 
       {/* TABLE WRAPPER */}
-      <div className='flex flex-col justify-center items-center w-full' id='TableWrapper'>
+      <div className='flex flex-col justify-center items-center pt-4 my-8 w-[80%] bg-[#D9D9D9]' id='TableWrapper'>
         {/* TABLE HEADER */}
-        <div className='pb-4 pt-4 w-full justify-center text-center'>
+        <div className='py-2 w-full justify-center text-center bg-gradient-to-b from-[#D9D9D9] to-[#D4D4D4]'>
           <h2 className='text-3xl font-serif'>Lista de Alunos</h2>
         </div>
 
         {/* TABLE */}
-        <div className='bg-yellow-500 justify-center items-center w-[72vw] h-[72vh] mb-[10vh] flex flex-col' id='AlunosTable'>
+        <div className='bg-gradient-to-b from-[#D4D4D4] via-[#CACACA] to-[#C0C0C0] justify-center items-center w-full min-h-[40vh] flex flex-col' id='AlunosTable'>
 
           {/* TABLE HEADER */}
-          <div className='flex w-full'>
+          <div className='flex flex-row justify-between items-center w-full'>
             {/* TABLE FILTER */}
-            <div id='select-label' className='flex-col justify-center items-center'>
-              <label htmlFor="" className='pl-3 font-bold font-sans text-xl'>FILTRO POR SÉRIE</label>
-                <select className='bg-slate-200 p-4 m-2 rounded-lg w-[16vw] h-[8vh] ml-4 self-start' 
-                value={filterSelectedSeries} onChange={handleFilterSeriesChange}>
-                  {Series.map((serieObj) => (
-                    <option key={serieObj['label']} value={serieObj['value']}>
-                      {serieObj['label']}
-                    </option>
-                  ))}
-                </select>
+            <div id='select-label' className='flex flex-col items-start justify-center'>
+              <label htmlFor="" className='font-bold font-sans text-xl ml-9'>FILTRO POR SÉRIE</label>
+              <select className='bg-[#25251D] text-[#FFFFFF] pl-4 mb-2 rounded-lg w-[16vw] h-[8vh] ml-7 self-start' 
+              value={filterSelectedSeries} onChange={handleFilterSeriesChange}>
+                {Series.map((serieObj) => (
+                  <option key={serieObj['label']} value={serieObj['value']}>
+                    {serieObj['label']}
+                  </option>
+                ))}
+              </select>
             </div>
             {/* ADD ALUNO BUTTON */}
-            <button className='bg-slate-200 p-2 m-2 rounded-lg w-[16vw] h-[8vh] ml-auto' onClick={OpenModal}>
+            <button className='bg-[#25251D] text-[#FFFFFF] self-end m-2 mr-7 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenModal}>
               <p className='font-bold font-sans'>ADICIONAR ALUNO</p>
               <Modal style={modalStyles}
               isOpen={ModalIsOpen}
@@ -479,18 +479,17 @@ function App() {
                       type="text" 
                       placeholder='Ex.: José da Silva' 
                       onChange={(e) => setNome(e.target.value)}
-                      className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] text-black font-serif text-lg' />  
+                      className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' />  
 
                       <input id='input-cpf' 
                       value={cpf}
                       type="text" 
                       placeholder='Ex.: 000.000.000-01'
                       onChange={(e) => setCpf(e.target.value)}
-                      className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] text-black font-serif text-lg' />
+                      className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' />
 
                       <select id='input-serie'
-
-                      className='bg-slate-200 p-2 m-2 rounded-lg w-[20vw] font-serif text-lg text-black' 
+                      className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg ' 
                       value={serie} 
                       onChange={(e) => {
                         setSerie(e.target.value);
@@ -501,12 +500,12 @@ function App() {
                             </option>
                           ))}
                       </select>
-                      {/* <input type="text" placeholder='' className='bg-slate-200 p-2 m-2 rounded-lg text-black' /> */}
+                      {/* <input type="text" placeholder='' className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg text-black' /> */}
                     </div>
                   </form>
                 </div>
                 <div className='flex flex-row justify-evenly'>
-                  <button className='w-[20vw] bg-slate-200 p-2 m-2 rounded-lg text-black'
+                  <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg'
                   disabled={((isLoading) || (buttonClicked))}
                   onClick={(e) => {
                     e.preventDefault();
@@ -516,7 +515,7 @@ function App() {
                   }}>
                     Fechar
                   </button>
-                  <button className='w-[20vw] bg-slate-200 p-2 m-2 rounded-lg text-black' 
+                  <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg ' 
                   disabled={((isLoading) || (buttonClicked))}
                   onClick={(e) => {
                     // e.preventDefault();
@@ -541,7 +540,7 @@ function App() {
           </div>
           
           {/* TABLE CONTENT */}
-          <div className='flex flex-col justify-between h-3/4 w-[90%] bg-slate-400 overflow-y-scroll sm:overflow-x-scroll' id='AlunosWrapper'>
+          <div className='flex flex-col w-[95%] bg-gradient-to-br from-[#D9D9D9] to-[#C0C0C0] min-h-[10vh] max-h-[40vh] overflow-y-scroll' id='AlunosWrapper'>
             <table>
               <thead>
                 <tr>
@@ -580,13 +579,13 @@ function App() {
                                   );
                                   console.log('Confirmando deleção...');
                                 }}>
-                                  <img className='w-full h-full' src={Images.ok as string} alt="Confirmar" />
+                                  <img className='w-full h-full filter invert' src={Images.ok as string} alt="Confirmar" />
                                 </button>                           
                                 <button className='h-[32px] w-[32px] bg-red-400 rounded-3xl mx-1' onClick={() => {
                                   setShowConfirm(!ShowConfirm);
                                   console.log('Cancelando deleção...');
                                 }}>
-                                  <img className='w-full h-full' src={Images.cancelar as string} alt="Cancelar" />
+                                  <img className='w-full h-full filter invert' src={Images.cancelar as string} alt="Cancelar" />
                                 </button>
                               </div>
                             </div>
@@ -594,22 +593,22 @@ function App() {
 
                           <>
                             <div className='flex flex-row mx-4 justify-center items-center'>
-                              <button className='bg-slate-200 w-[2vw] h-[4vh] mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#25251D] text-[#FFFFFF] w-[2vw] h-[4vh] mx-1 my-2 rounded-lg' onClick={() => {
                                 handleAlunoInfoRequest(aluno.matricula).then(
                                   () => {
                                     OpenInfoModal();
                                   }
                                 )
                               }}>
-                                <img className='w-full h-full' src={Images.lista as string} alt="info" />
+                                <img className='w-full h-full filter invert' src={Images.lista as string} alt="info" />
                               </button>
-                              <button className='bg-slate-200 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#25251D] text-[#FFFFFF] w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 setSelectedMatricula(aluno.matricula);
                                 setSaveOption(false);
                                 setShowConfirm(true);
                                 console.log('Deletando aluno...');
                               }} >
-                                <img className='w-full h-full' src={Images.lixo as string} alt="delete" />
+                                <img className='w-full h-full filter invert' src={Images.lixo as string} alt="delete" />
                               </button>
                             </div>
                           </>
@@ -624,7 +623,7 @@ function App() {
           </div>
 
           {/* TABLE FOOTER */}
-          <div className='flex flex-row justify-center w-full'>
+          <div className='flex flex-row justify-center pb-4 w-full bg-gradient-to-b from-[#C0C0C0] to-[#AEAEAE]'>
             <div className='flex flex-col justify-center items-start ml-2'>
               <span className='text-center mt-4 ml-2'>
                 <p className=' text-sm font-bold font-serif'>Página: {page}</p>
@@ -636,7 +635,7 @@ function App() {
 
             <div className='ml-auto flex flex-row items-center justify-center'>
               <div className='p-2'>
-                <button className='bg-slate-200 m-1 p-1 rounded-lg w-[2.5vw] h-[5vh]'
+                <button className='bg-[#25251D] text-[#FFFFFF] m-1 p-1 rounded-lg w-[2.5vw] h-[5vh]'
                 onClick={() => {
                   setAlunos([{}]);
                   handleRequest();
@@ -645,17 +644,17 @@ function App() {
                   clearForms();
                   console.log('ATUALIZANDO TABELA...')
                 }}>
-                  <img className='w-full h-full' src={Images.atualizar as string} alt="Atualizar"/>
+                  <img className='w-full h-full filter invert' src={Images.atualizar as string} alt="Atualizar"/>
                 </button>
               </div>
 
               <div>
-                <button id='PREVIOUS-BTN' className='bg-slate-200 p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={page === 1} onClick={() => {
+                <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={page === 1} onClick={() => {
                   handlePreviousPageRequest();
                 }}>
                   Anterior
                 </button>
-                <button id='NEXT-BTN' className='bg-slate-200 p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={nextEnabled} onClick={() => {
+                <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={nextEnabled} onClick={() => {
                   handleNextPageRequest();
                 }}>
                   Próxima
@@ -666,19 +665,19 @@ function App() {
           </div>
 
           {/* <div className='justify-center items-center bg-red-500 w-full flex flex-row'>
-              <Button className='bg-slate-200 p-2 m-2 rounded-lg' onClick={() => {
+              <Button className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg' onClick={() => {
               }}>Anterior</button>
-              <Button className='bg-slate-200 p-2 m-2 rounded-lg' disabled={nextEnabled} onClick={() => {
+              <Button className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg' disabled={nextEnabled} onClick={() => {
               }}>Próxima</button>
           </div> */}
         </div>
       </div>
       
       {/* FOOTER */}
-      <div className='flex w-screen justify-center items-center bg-slate-600' id='footer'>
-        <div className='w-[12vw] h-[8vh] flex justify-center items-center bg-gradient-to-b from-[#4157EB] to-slate-600 rounded-3xl'>
+      <footer className='bg-[#284B63] w-full shadow-[0_50vh_0_50vh_#284B63] justify-center flex' id='footer'>
+        <div className='w-[12vw] h-[8vh] flex justify-center items-center bg-slate-600 rounded-3xl z-10'>
           {/* <span className='text-4xl font-bold py-4 justify-center items-center flex flex-col'> */}
-          <div className='w-[140px] h-[50px] justify-center items-center flex bg-slate-200 rounded-3xl z-10'>
+          <div className='w-[140px] h-[50px] justify-center items-center flex bg-[#25251D] text-[#FFFFFF] rounded-3xl z-10'>
             <a href="https://github.com/erlonl/"
             className='flex flex-row justify-center items-center w-full h-full rounded-3xl'>
               <img 
@@ -690,7 +689,7 @@ function App() {
             </a>
           </div>
         </div>
-      </div>
+      </footer>
 
     </div>
   );
