@@ -379,9 +379,7 @@ function App() {
                         </option>
                       ))}
                   </select>
-
                 </div>
-
               </div>
             </form>
           </div>
@@ -413,6 +411,97 @@ function App() {
               );
             }}>
               Atualizar
+            </button>
+          </div>
+      </Modal>
+
+      <Modal style={modalStyles}
+        isOpen={ModalIsOpen}
+        onRequestClose={CloseModal}
+        contentLabel='EXAMPLE'
+        shouldCloseOnEsc={true}
+        shouldCloseOnOverlayClick={false}
+        >                
+          <h2 className='text-center font-bold text-3xl top-[0]'>ADICIONAR ALUNO</h2>
+
+          <div className='flex flex-col w-[70%] h-[70%]'>
+            <label> INFORMAÇÕES </label>
+            <form className='flex flex-row'>
+              <div className='flex flex-col justify-evenly items-end'>
+
+                <div>
+                  <label className='text-xl font-serif'>
+                    Nome
+                  </label>
+                  <input id='input-nome' 
+                    value={nome} 
+                    type="text" 
+                    placeholder='Ex.: José da Silva' 
+                    onChange={(e) => setNome(e.target.value)}
+                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' />  
+                </div>
+
+                <div>
+                  <label className='text-xl font-serif'>
+                    CPF
+                  </label>
+                  <input id='input-cpf' 
+                    value={cpf}
+                    type="text" 
+                    placeholder='Ex.: 000.000.000-01'
+                    onChange={(e) => setCpf(e.target.value)}
+                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' />
+                </div>
+
+                <div>
+                  <label className='text-xl font-serif'>
+                    Série
+                  </label>
+                  <select id='input-serie'
+                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg ' 
+                    value={serie} 
+                    onChange={(e) => {
+                    setSerie(e.target.value);
+                    }}>
+                      {Series.slice(1).map((serieObj) => (
+                        <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
+                          {serieObj['label']}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div className='flex flex-row justify-evenly'>
+            <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg'
+            disabled={((isLoading) || (buttonClicked))}
+            onClick={(e) => {
+              e.preventDefault();
+              console.log('Closing modal...');
+              clearForms();
+              CloseModal(e);
+            }}>
+              Fechar
+            </button>
+            <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg ' 
+            disabled={((isLoading) || (buttonClicked))}
+            onClick={(e) => {
+              // e.preventDefault();
+              console.log('Saving new aluno...');
+              const data = { nome, cpf, serie };
+              console.log(data);
+
+              handleAddAlunoRequest(data).then(
+                () => {
+                  handleRequest();
+                  handleTotalAlunosRequest(filterSelectedSeries);
+                  // CloseModal(e);
+                  clearForms();
+                }
+              );
+            }}>
+              Salvar
             </button>
           </div>
       </Modal>
@@ -450,104 +539,18 @@ function App() {
             {/* ADD ALUNO BUTTON */}
             <button className='bg-[#25251D] text-[#FFFFFF] self-end m-2 mr-7 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenModal}>
               <p className='font-bold font-sans'>ADICIONAR ALUNO</p>
-              <Modal style={modalStyles}
-              isOpen={ModalIsOpen}
-              onRequestClose={CloseModal}
-              contentLabel='EXAMPLE'
-              shouldCloseOnEsc={true}
-              shouldCloseOnOverlayClick={false}
-              >                
-                <h2 className='text-center font-bold text-3xl top-[0]'>ADICIONAR ALUNO</h2>
-
-                <div className='flex flex-col w-[70%] h-[70%]'>
-                  <label> INFORMAÇÕES </label>
-                  <form className='flex flex-row'>
-                    <div className='flex flex-col justify-evenly space-y-4 items-end'>
-                      <label className='text-xl font-serif'>
-                        Nome:
-                      </label>
-                      <label className='text-xl font-serif'>
-                        CPF:
-                      </label>
-                      <label className='text-xl font-serif'>
-                        Série:
-                      </label>
-                    </div>
-                    <div className='flex flex-col items-start'>
-                      <input id='input-nome' 
-                      value={nome} 
-                      type="text" 
-                      placeholder='Ex.: José da Silva' 
-                      onChange={(e) => setNome(e.target.value)}
-                      className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' />  
-
-                      <input id='input-cpf' 
-                      value={cpf}
-                      type="text" 
-                      placeholder='Ex.: 000.000.000-01'
-                      onChange={(e) => setCpf(e.target.value)}
-                      className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' />
-
-                      <select id='input-serie'
-                      className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg ' 
-                      value={serie} 
-                      onChange={(e) => {
-                        setSerie(e.target.value);
-                      }}>
-                          {Series.slice(1).map((serieObj) => (
-                            <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
-                              {serieObj['label']}
-                            </option>
-                          ))}
-                      </select>
-                      {/* <input type="text" placeholder='' className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg text-black' /> */}
-                    </div>
-                  </form>
-                </div>
-                <div className='flex flex-row justify-evenly'>
-                  <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg'
-                  disabled={((isLoading) || (buttonClicked))}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    console.log('Closing modal...');
-                    clearForms();
-                    CloseModal(e);
-                  }}>
-                    Fechar
-                  </button>
-                  <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg ' 
-                  disabled={((isLoading) || (buttonClicked))}
-                  onClick={(e) => {
-                    // e.preventDefault();
-                    console.log('Saving new aluno...');
-                    const data = { nome, cpf, serie };
-                    console.log(data);
-
-                    handleAddAlunoRequest(data).then(
-                      () => {
-                        handleRequest();
-                        handleTotalAlunosRequest(filterSelectedSeries);
-                        // CloseModal(e);
-                        clearForms();
-                      }
-                    );
-                  }}>
-                    Salvar
-                  </button>
-                </div>
-              </Modal>
             </button>
           </div>
           
           {/* TABLE CONTENT */}
           <div className='flex flex-col w-[95%] bg-gradient-to-br from-[#D9D9D9] to-[#C0C0C0] min-h-[10vh] max-h-[40vh] overflow-y-scroll' id='AlunosWrapper'>
-            <table>
-              <thead>
-                <tr>
-                  <th className='text-3xl border text-center'>Nome</th>
-                  <th className='text-3xl border text-center'>Matrícula</th>
-                  <th className='text-3xl border text-center'>Série</th>
-                  <th className='text-xl border text-center'>OPÇÕES</th>
+            <table className='border-collapse w-[full]'>
+              <thead className='sticky top-[0] z-[1] bg-gradient-to-b from-[#D5D5D5] to-[#D4D4D4] shadow-lg'>
+                <tr className='py-4'>
+                  <th className='py-4 text-3xl text-center'>Nome</th>
+                  <th className='py-4 text-3xl text-center'>Matrícula</th>
+                  <th className='py-4 text-3xl text-center'>Série</th>
+                  <th className='py-4 text-xl text-center'>OPÇÕES</th>
                 </tr>
               </thead>
               <tbody>
@@ -581,13 +584,13 @@ function App() {
                                   );
                                   console.log('Confirmando deleção...');
                                 }}>
-                                  <img className='w-full h-full filter invert' src={Images.ok as string} alt="Confirmar" />
+                                  <img className='w-full h-full' src={Images.ok as string} alt="Confirmar" />
                                 </button>                           
                                 <button className='h-[32px] w-[32px] bg-red-400 rounded-3xl mx-1' onClick={() => {
                                   setShowConfirm(!ShowConfirm);
                                   console.log('Cancelando deleção...');
                                 }}>
-                                  <img className='w-full h-full filter invert' src={Images.cancelar as string} alt="Cancelar" />
+                                  <img className='w-full h-full' src={Images.cancelar as string} alt="Cancelar" />
                                 </button>
                               </div>
                             </div>
