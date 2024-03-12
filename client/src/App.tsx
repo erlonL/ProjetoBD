@@ -424,14 +424,14 @@ function App() {
       </div>
 
       {/* TABLE WRAPPER */}
-      <div className='flex flex-col justify-center items-center pt-4 my-8 w-[80%] bg-[#D9D9D9]' id='TableWrapper'>
+      <div className='flex flex-col justify-center items-center pt-4 my-8 w-[80%] min-h-fit bg-[#D9D9D9]' id='TableWrapper'>
         {/* TABLE HEADER */}
         <div className='py-2 w-full justify-center text-center bg-gradient-to-b from-[#D9D9D9] to-[#D4D4D4]'>
           <h2 className='text-3xl font-serif'>Lista de Alunos</h2>
         </div>
 
         {/* TABLE */}
-        <div className='bg-gradient-to-b from-[#D4D4D4] via-[#CACACA] to-[#C0C0C0] justify-center items-center w-full min-h-[40vh] flex flex-col' id='AlunosTable'>
+        <div className='bg-gradient-to-b from-[#D4D4D4] via-[#CACACA] to-[#C0C0C0] justify-center items-center w-full min-h-fit flex flex-col' id='AlunosTable'>
 
           {/* TABLE HEADER */}
           <div className='flex flex-row justify-between items-center w-full'>
@@ -561,7 +561,9 @@ function App() {
                     <tr className='justify-center items-center' key={aluno.matricula}>
                       <td className='text-base border text-center'>{aluno.nome}</td>
                       <td className='text-base border text-center'>{aluno.matricula}</td>
-                      <td className='text-base border text-center'>{aluno.serie}</td>
+                      <td className='text-base border text-center'>
+                        {Series.filter((serieObj) => serieObj['value'] === aluno.serie)[0]['label']}
+                      </td>
                       <td className='flex flex-row w-full h-[12vh] justify-center'>
                         {
                           (renderOption === 'delete') && (SelectedMatricula === aluno.matricula) ? 
@@ -623,9 +625,9 @@ function App() {
           </div>
 
           {/* TABLE FOOTER */}
-          <div className='flex flex-row justify-center pb-4 w-full bg-gradient-to-b from-[#C0C0C0] to-[#AEAEAE]'>
-            <div className='flex flex-col justify-center items-start ml-2'>
-              <span className='text-center mt-4 ml-2'>
+          <div className='flex flex-row justify-center w-full bg-gradient-to-b from-[#C0C0C0] to-[#AEAEAE]'>
+            <div className='flex flex-col justify-center items-start m-4'>
+              <span className='text-center ml-2'>
                 <p className=' text-sm font-bold font-serif'>Página: {page}</p>
               </span>
               <span className='text-center ml-2'>
@@ -649,12 +651,12 @@ function App() {
               </div>
 
               <div>
-                <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={page === 1} onClick={() => {
+                <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-4 rounded-lg w-[8vw] h-[6vh]' disabled={page === 1} onClick={() => {
                   handlePreviousPageRequest();
                 }}>
                   Anterior
                 </button>
-                <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[8vw] h-[5vh]' disabled={nextEnabled} onClick={() => {
+                <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-4 rounded-lg w-[8vw] h-[6vh]' disabled={nextEnabled} onClick={() => {
                   handleNextPageRequest();
                 }}>
                   Próxima
@@ -683,7 +685,7 @@ function App() {
               <img 
               src={Images.github as string} 
               alt="github logo"
-              className='w-full h-full object-contain'
+              className='w-full h-full filter invert object-contain'
               />
               <span className='font-mono text-base -ml-4 pl-6 pr-6 py-2 rounded-r-3xl'>erlonl</span>
             </a>
