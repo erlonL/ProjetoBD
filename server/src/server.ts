@@ -21,6 +21,8 @@ app.delete('/api/deleteAluno', AlunoController.deleteAluno);
 
 app.get('/api/totalAlunos', AlunoController.totalAlunos);
 
+app.get('/api/getColumns', AlunoController.getColumns);
+
 // app.post('/api/createAlunoMany', AlunoController.createAlunoMany);
 
 app.listen(PORT, () => {

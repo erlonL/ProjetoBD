@@ -241,6 +241,26 @@ export default {
             })
         }
     },
+    async getColumns(req: Request, res: Response) {
+        try{
+            const columns = await prisma.aluno.findMany({
+                select: {
+                    matricula: true,
+                    nome: true,
+                    serie: true
+                },
+                take: 1
+            });
+
+            return res.json(Object.keys(columns[0]));
+        }catch(error: any){
+            return res.status(400).json({
+                error: true,
+                message: error.message
+            })
+
+        }
+    }
     // async createAlunoMany(req: Request, res: Response) {
     //     try{
     //         const alunos = req.body;

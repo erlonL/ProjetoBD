@@ -168,11 +168,11 @@ function App() {
         return;
       }
       setAlunos(data);
-      
     }catch(e){
       console.error('There has been a problem with your fetch operation:', e);
       return;
     } finally {
+      // setIsLoading(false);
       console.log('Request completed');
     }
   };
@@ -325,8 +325,14 @@ function App() {
     }
   }
 
+  const [editName, setEditName] = useState(false);
+  const [editSerie, setEditSerie] = useState(false);
+  const [editCpf, setEditCpf] = useState(false);
+
   return (
-    <div className='bg-gradient-to-t bg-[#353535] justify-center items-center h-full w-full flex flex-col'>
+    <div className='bg-[#353535] justify-center items-center h-full w-full flex flex-col'>
+
+      {/* ALUNO INFO */}
       <Modal style={modalStyles}
         isOpen={InfoModalIsOpen}
         onRequestClose={CloseInfoModal}
@@ -334,54 +340,82 @@ function App() {
         shouldCloseOnEsc={true}
         shouldCloseOnOverlayClick={false}
         >
-          <h2 className='text-center font-bold text-3xl top-[0]'>INFORMAÇÕES DO ALUNO</h2>
-          <div className='flex flex-col w-[70%] h-[70%]'>
-            <label> {updMatricula} </label>
-            <form className='flex flex-row'>
-              <div className='flex flex-col justify-evenly items-end'>
-                <div>
-                  <label className='text-xl font-serif'>
-                    Nome
-                  </label>
-                  <input id='input-nome' 
-                    value={updNome} 
-                    type="text" 
-                    placeholder='Ex.: José da Silva'
-                    onChange={(e) => setUpdNome(e.target.value)}
-                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' 
-                  /> 
-                </div>
+          <div className='flex flex-row w-[70%] h-[70%] items-center'>
+            <div id='alunoIMG' className='w-[50%] h-[80%] mx-6 border rounded-full p-6'>
+              <span className="icon-[gravity-ui--person] w-full h-full"></span>
+            </div>
 
-                <div>
-                  <label className='text-xl font-serif'>
-                    CPF
-                  </label>
-                  <input id='input-cpf' 
-                    value={updCpf}
-                    type="text" 
-                    placeholder='Ex.: 000.000.000-01'
-                    onChange={(e) => setUpdCpf(e.target.value)}
-                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' 
-                  />
-                </div>
-
-                <div>
-                  <label className='text-xl font-serif'>
-                    Série
-                  </label>
-                  <select id='input-serie'
-                    className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg' 
-                    value={updSerie} 
-                    onChange={(e) => { setUpdSerie(e.target.value); }}>
-                      {Series.slice(1).map((serieObj) => (
-                        <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
-                          {serieObj['label']}
-                        </option>
-                      ))}
-                  </select>
-                </div>
+            <div id='alunoInfo' className='flex flex-col w-[80%] h-[80%]'>
+              {/* NAME */}
+              <div className='flex flex-row items-center space-x-2'>
+              {
+                editName ? (
+                    <input id='input-nome' 
+                      value={updNome} 
+                      type="text" 
+                      placeholder='Ex.: José da Silva'
+                      onChange={(e) => setUpdNome(e.target.value)}
+                      className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                      />
+                ) : (
+                  <>
+                    <h3 className='text-[32px] font-medium'>{updNome}</h3>
+                    <span className="icon-[gravity-ui--pencil-to-square] w-[16px]"></span>
+                  </>
+                )
+              }
               </div>
-            </form>
+              {/* SERIE */}
+              <div className='flex flex-row items-center space-x-2'>
+                {
+                  editSerie ? (
+                    <select id='input-serie'
+                      className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                      value={updSerie} 
+                      onChange={(e) => { setUpdSerie(e.target.value); }}>
+                        {Series.slice(1).map((serieObj) => (
+                          <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
+                            {serieObj['label']}
+                          </option>
+                        ))}
+                    </select>
+                  ) : (
+                        AlunoModalInfo.serie !== '' ? (
+                          <>
+                            <h4 className='text-[24px] font-normal'>{Series.filter((serieObj) => serieObj['value'] === AlunoModalInfo.serie)[0]['label']}</h4>
+                            <span className="icon-[gravity-ui--pencil-to-square] w-[16px]"></span>
+                          </>
+                        ) : (
+                          <h4> </h4>
+                        )
+                  )
+                }
+              </div>
+              {/* CPF */}
+              <div className='flex flex-row items-center space-x-2'>
+                {
+                  editCpf ? (
+                    <input id='input-cpf' 
+                      value={updCpf}
+                      type="text" 
+                      placeholder='Ex.: 000.000.000-01'
+                      onChange={(e) => setUpdCpf(e.target.value)}
+                      className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                      />
+                  ) : (
+                    <>
+                      <p className='text-[16px] font-light tracking-wide'> {updCpf} </p>
+                      <span className="icon-[gravity-ui--pencil-to-square] w-[16px]"></span>
+                    </>
+                  )
+                }
+              </div>
+
+              <div>
+                <p className='text-[16px] font-light tracking-wide'> {updMatricula} </p>
+              </div>
+
+            </div>
           </div>
           <div className='flex flex-row justify-evenly'>
           <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg'
@@ -415,6 +449,7 @@ function App() {
           </div>
       </Modal>
 
+      {/* ADD ALUNO */}
       <Modal style={modalStyles}
         isOpen={ModalIsOpen}
         onRequestClose={CloseModal}
@@ -513,44 +548,44 @@ function App() {
       </div>
 
       {/* TABLE WRAPPER */}
-      <div className='flex flex-col justify-center items-center pt-4 my-8 w-[80%] min-h-fit bg-[#D9D9D9]' id='TableWrapper'>
-        {/* TABLE HEADER */}
-        <div className='py-2 w-full justify-center text-center bg-gradient-to-b from-[#D9D9D9] to-[#D4D4D4]'>
+      <div className='flex flex-col justify-center items-center my-8 w-[80%] min-h-fit bg-[#D4D4D4]' id='TableWrapper'>
+        {/* TABLE TITLE */}
+        <div className='w-[95%] my-4 justify-center text-center bg-[#D4D4D4]'>
           <h2 className='text-3xl font-serif'>Lista de Alunos</h2>
         </div>
 
         {/* TABLE */}
-        <div className='bg-gradient-to-b from-[#D4D4D4] via-[#CACACA] to-[#C0C0C0] justify-center items-center w-full min-h-fit flex flex-col' id='AlunosTable'>
+        <div className='bg-[#D4D4D4] justify-center items-center w-full min-h-fit flex flex-col' id='AlunosTable'>
 
           {/* TABLE HEADER */}
-          <div className='flex flex-row justify-between items-center w-full'>
+          <div className='flex flex-row justify-between items-center w-[95%]'>
             {/* TABLE FILTER */}
             <div id='select-label' className='flex flex-col items-start justify-center'>
-              <label htmlFor="" className='font-bold font-sans text-xl ml-9'>FILTRO POR SÉRIE</label>
-              <select className='bg-[#25251D] text-[#FFFFFF] pl-4 mb-2 rounded-lg w-[16vw] h-[8vh] ml-7 self-start' 
+              <label htmlFor="select" className='font-bold font-sans text-xl'>FILTRO POR SÉRIE</label>
+              <select className='bg-[#25251D] text-[#FFFFFF] p-4 mb-2 rounded-lg w-[16vw] h-[8vh] self-start' 
               value={filterSelectedSeries} onChange={handleFilterSeriesChange}>
                 {Series.map((serieObj) => (
-                  <option key={serieObj['label']} value={serieObj['value']}>
+                  <option className='pl-2' key={serieObj['label']} value={serieObj['value']}>
                     {serieObj['label']}
                   </option>
                 ))}
               </select>
             </div>
             {/* ADD ALUNO BUTTON */}
-            <button className='bg-[#25251D] text-[#FFFFFF] self-end m-2 mr-7 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenModal}>
-              <p className='font-bold font-sans'>ADICIONAR ALUNO</p>
+            <button className='bg-[#25251D] text-[#FFFFFF] self-end mb-2 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenModal}>
+              <p className='font-bold font-sans text-[#FFFFFF]'>ADICIONAR ALUNO</p>
             </button>
           </div>
           
           {/* TABLE CONTENT */}
-          <div className='flex flex-col w-[95%] bg-gradient-to-br from-[#D9D9D9] to-[#C0C0C0] min-h-[10vh] max-h-[40vh] overflow-y-scroll' id='AlunosWrapper'>
+          <div className='flex flex-col w-[95%] bg-[#D4D4D4] min-h-[10vh] max-h-[40vh] overflow-y-scroll' id='AlunosWrapper'>
             <table className='border-collapse w-[full]'>
-              <thead className='sticky top-[0] z-[1] bg-gradient-to-b from-[#D5D5D5] to-[#D4D4D4] shadow-lg'>
-                <tr className='py-4'>
-                  <th className='py-4 text-3xl text-center'>Nome</th>
-                  <th className='py-4 text-3xl text-center'>Matrícula</th>
-                  <th className='py-4 text-3xl text-center'>Série</th>
-                  <th className='py-4 text-xl text-center'>OPÇÕES</th>
+              <thead className='sticky top-[0] z-[1] bg-[#D6D6D6] shadow-lg'>
+                <tr>
+                  <th className='text-3xl text-center'>Nome</th>
+                  <th className='text-3xl text-center'>Matrícula</th>
+                  <th className='text-3xl text-center'>Série</th>
+                  <th className='text-xl text-center'>OPÇÕES</th>
                 </tr>
               </thead>
               <tbody>
@@ -558,23 +593,23 @@ function App() {
                   <tr>
                     <td colSpan={3} className='text-base'>Nenhum aluno encontrado</td>
                   </tr>
-                ) : (
+                ) : 
+                (
                   console.log('ALUNOS:', Alunos),
                   Alunos.map((aluno: any) => (
-                    <tr className='justify-center items-center' key={aluno.matricula}>
+                    <tr key={aluno.matricula}>
                       <td className='text-base border text-center'>{aluno.nome}</td>
                       <td className='text-base border text-center'>{aluno.matricula}</td>
                       <td className='text-base border text-center'>
                         {Series.filter((serieObj) => serieObj['value'] === aluno.serie)[0]['label']}
                       </td>
-                      <td className='flex flex-row w-full h-[12vh] justify-center'>
+                      <td className='flex flex-row w-full h-[8vh] justify-center'>
                         {
                           (renderOption === 'delete') && (SelectedMatricula === aluno.matricula) ? 
                           <>
                             <div className='flex flex-col justify-center items-center'>
-                              <label className='text-base font-bold'>Deletar aluno?</label>
                               <div className='flex flex-row justify-center items-center'>
-                                <button className='h-[32px] w-[32px] bg-green-400 rounded-3xl mx-1' onClick={() => {
+                                <button className='h-[32px] w-[32px] bg-green-600 rounded-3xl mx-1' onClick={() => {
                                   handleDeleteAlunoRequest(aluno.matricula).then(
                                     () => {
                                       handleRequest();
@@ -584,13 +619,13 @@ function App() {
                                   );
                                   console.log('Confirmando deleção...');
                                 }}>
-                                  <img className='w-full h-full' src={Images.ok as string} alt="Confirmar" />
+                                  <span className="icon-[gravity-ui--circle-check] w-full h-full"></span>
                                 </button>                           
-                                <button className='h-[32px] w-[32px] bg-red-400 rounded-3xl mx-1' onClick={() => {
+                                <button className='h-[32px] w-[32px] bg-red-600 rounded-3xl mx-1' onClick={() => {
                                   setShowConfirm(!ShowConfirm);
                                   console.log('Cancelando deleção...');
                                 }}>
-                                  <img className='w-full h-full' src={Images.cancelar as string} alt="Cancelar" />
+                                  <span className="icon-[gravity-ui--circle-xmark] w-full h-full"></span>
                                 </button>
                               </div>
                             </div>
@@ -598,14 +633,14 @@ function App() {
 
                           <>
                             <div className='flex flex-row mx-4 justify-center items-center'>
-                              <button className='bg-[#25251D] text-[#FFFFFF] w-[2vw] h-[4vh] mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#25251D] text-[#FFFFFF] w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 handleAlunoInfoRequest(aluno.matricula).then(
                                   () => {
                                     OpenInfoModal();
                                   }
                                 )
                               }}>
-                                <img className='w-full h-full filter invert' src={Images.lista as string} alt="info" />
+                                <span className="icon-[gravity-ui--square-list-ul] w-full h-full"></span>
                               </button>
                               <button className='bg-[#25251D] text-[#FFFFFF] w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 setSelectedMatricula(aluno.matricula);
@@ -613,7 +648,7 @@ function App() {
                                 setShowConfirm(true);
                                 console.log('Deletando aluno...');
                               }} >
-                                <img className='w-full h-full filter invert' src={Images.lixo as string} alt="delete" />
+                                <span className="icon-[gravity-ui--trash-bin] w-full h-full"></span>
                               </button>
                             </div>
                           </>
@@ -628,43 +663,39 @@ function App() {
           </div>
 
           {/* TABLE FOOTER */}
-          <div className='flex flex-row justify-center w-full bg-gradient-to-b from-[#C0C0C0] to-[#AEAEAE]'>
-            <div className='flex flex-col justify-center items-start m-4'>
-              <span className='text-center ml-2'>
+          <div className='flex flex-row my-4 justify-center w-[95%] bg-[#D4D4D4]'>
+            <div className='flex flex-col justify-center items-start'>
+              <span className='text-center'>
                 <p className=' text-sm font-bold font-serif'>Página: {page}</p>
               </span>
-              <span className='text-center ml-2'>
+              <span className='text-center'>
                 <p className='text-sm font-bold font-serif'>{Object.keys(Alunos[0]).length === 0 ? 0 : Alunos.length} / {page === 1 ? totalAlunos : totalAlunos - ((page - 1) * 12)} </p>
               </span>
             </div>
 
-            <div className='ml-auto flex flex-row items-center justify-center'>
-              <div className='p-2'>
-                <button className='bg-[#25251D] text-[#FFFFFF] m-1 p-1 rounded-lg w-[2.5vw] h-[5vh]'
-                onClick={() => {
-                  setAlunos([{}]);
-                  handleRequest();
-                  setShowConfirm(false);
-                  setSaveOption(false);
-                  clearForms();
-                  console.log('ATUALIZANDO TABELA...')
-                }}>
-                  <img className='w-full h-full filter invert' src={Images.atualizar as string} alt="Atualizar"/>
-                </button>
-              </div>
+            <div className='ml-auto flex flex-row items-center justify-evenly space-x-auto w-[16vw] h-[8vh]'>
+              <button className='bg-[#25251D] text-[#FFFFFF] p-[4px] rounded-lg w-[3vw] h-[6vh]'
+              onClick={() => {
+                setAlunos([{}]);
+                handleRequest();
+                setShowConfirm(false);
+                setSaveOption(false);
+                clearForms();
+                console.log('ATUALIZANDO TABELA...')
+              }}>
+                <img className='w-full h-full filter invert' src={Images.atualizar as string} alt="Atualizar"/>
+              </button>
 
-              <div>
-                <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-4 rounded-lg w-[8vw] h-[6vh]' disabled={page === 1} onClick={() => {
-                  handlePreviousPageRequest();
-                }}>
-                  Anterior
-                </button>
-                <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] p-2 m-4 rounded-lg w-[8vw] h-[6vh]' disabled={nextEnabled} onClick={() => {
-                  handleNextPageRequest();
-                }}>
-                  Próxima
-                </button>
-              </div>
+              <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[3vw] h-[6vh] p-[4px]' disabled={page === 1} onClick={() => {
+                handlePreviousPageRequest();
+              }}>
+                <span className="icon-[gravity-ui--arrow-shape-left] w-full h-full"></span>
+              </button>
+              <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[3vw] h-[6vh] p-[4px]' disabled={nextEnabled} onClick={() => {
+                handleNextPageRequest();
+              }}>
+                <span className="icon-[gravity-ui--arrow-shape-right] w-full h-full"></span>
+              </button>
             
             </div>
           </div>

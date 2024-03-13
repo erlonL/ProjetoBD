@@ -44,6 +44,8 @@
     ]
   },
   "devDependencies": {
+    "@iconify-json/gravity-ui": "^1.1.2",
+    "@iconify/tailwind": "^0.1.4",
     "@types/react-modal": "^3.16.3",
     "@types/webpack-env": "^1.18.4",
     "tailwindcss": "^3.4.1"
