@@ -25,22 +25,20 @@ function App() {
   const modalStyles: Modal.Styles = {
     overlay: {
       backgroundColor: 'rgba(0, 0, 0, 0)',
-      zIndex: '99999',
-      display: 'flex',
+      zIndex: '9999',
       justifyContent: 'center',
       position: 'fixed',
       top: '0',
       left: '0',
       width: '100vw',
       height: '100vh',
-      overflowY: 'auto',
     },
+    // transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    // transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    // transition-duration: 150ms;
     content: {
       top: '50%',
       left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
       // background: 'linear-gradient(180deg, rgba(163, 230, 53, 1), rgba(168, 85, 247, 0.7))',
       background: 'linear-gradient(120deg, rgba(71, 85, 105, 1), rgba(177,177,177, 1))',
@@ -49,11 +47,11 @@ function App() {
       color: 'white',
       border: '3px solid #000',
       borderRadius: '10px',
-      width: '50%',
-      height: '50%',
-      padding: '20px',
       display: 'flex',
       flexDirection: 'column',
+      transitionProperty: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
+      transitionDuration: '150ms',
+      transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
     }
   };
 
@@ -117,7 +115,7 @@ function App() {
       console.error('There has been a problem with totalAlunos Request:', e);
       return;
     } finally {
-      console.log('Request completed');
+      console.log(`total alunos for serie ${serie} is ${totalAlunos}`);
     }
   }
 
@@ -147,7 +145,7 @@ function App() {
       console.error('There has been a problem with your fetch operation:', e);
       return;
     } finally {
-      console.log('Request completed');
+      console.log('aluno added successfully');
       clearForms();
       setIsLoading(false);
       setButtonClicked(false);
@@ -173,7 +171,7 @@ function App() {
       return;
     } finally {
       // setIsLoading(false);
-      console.log('Request completed');
+      console.log(`Request for series ${filterSelectedSeries} page ${page} completed`);
     }
   };
 
@@ -307,7 +305,7 @@ function App() {
       console.error('There has been a problem with your fetch operation:', e);
       return;
     } finally {
-      console.log('Request completed');
+      console.log('Aluno Info Request Succesfully');
     }
   }
 
@@ -329,125 +327,175 @@ function App() {
   const [editSerie, setEditSerie] = useState(false);
   const [editCpf, setEditCpf] = useState(false);
 
+  useEffect(() => {
+    if(editSerie === false){
+      setUpdSerie(AlunoModalInfo['serie']);
+    }
+  }, [editSerie, AlunoModalInfo])
+
+  useEffect(() => {
+    if(editName === false){
+      setUpdNome(AlunoModalInfo['nome']);
+    }
+  }, [editName, AlunoModalInfo])
+
+  useEffect(() => {
+    if(editCpf === false){
+      setUpdCpf(AlunoModalInfo['cpf']);
+    }
+  }, [editCpf, AlunoModalInfo])
+
   return (
     <div className='bg-[#353535] justify-center items-center h-full w-full flex flex-col'>
 
       {/* ALUNO INFO */}
-      <Modal style={modalStyles}
+      {InfoModalIsOpen && (
+        <Modal style={modalStyles}
         isOpen={InfoModalIsOpen}
         onRequestClose={CloseInfoModal}
         contentLabel='EXAMPLE'
         shouldCloseOnEsc={true}
         shouldCloseOnOverlayClick={false}
         >
-          <div className='flex flex-row w-[70%] h-[70%] items-center'>
-            <div id='alunoIMG' className='w-[50%] h-[80%] mx-6 border rounded-full p-6'>
-              <span className="icon-[gravity-ui--person] w-full h-full"></span>
-            </div>
+          <div id='InfoModalWrapper' className='flex flex-col h-full w-full overflow-y-scroll'>
+            <div className='flex flex-row w-full h-full space-x-4 items-center'>
+              <div id='alunoIMG' className='w-[40%] h-[80%] border rounded-lg justify-center items-center flex'>
+                <span className="icon-[gravity-ui--person] w-[60%] h-[60%]"></span>
+              </div>
 
-            <div id='alunoInfo' className='flex flex-col w-[80%] h-[80%]'>
-              {/* NAME */}
-              <div className='flex flex-row items-center space-x-2'>
-              {
-                editName ? (
-                    <input id='input-nome' 
-                      value={updNome} 
-                      type="text" 
-                      placeholder='Ex.: José da Silva'
-                      onChange={(e) => setUpdNome(e.target.value)}
-                      className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
-                      />
-                ) : (
-                  <>
-                    <h3 className='text-[32px] font-medium'>{updNome}</h3>
-                    <span className="icon-[gravity-ui--pencil-to-square] w-[16px]"></span>
-                  </>
-                )
-              }
-              </div>
-              {/* SERIE */}
-              <div className='flex flex-row items-center space-x-2'>
+              <div id='alunoInfo' className='flex flex-col w-[60%] h-[80%]'>
+                {/* NAME */}
+                <div className='flex flex-row items-center space-x-2'>
                 {
-                  editSerie ? (
-                    <select id='input-serie'
-                      className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
-                      value={updSerie} 
-                      onChange={(e) => { setUpdSerie(e.target.value); }}>
-                        {Series.slice(1).map((serieObj) => (
-                          <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
-                            {serieObj['label']}
-                          </option>
-                        ))}
-                    </select>
-                  ) : (
-                        AlunoModalInfo.serie !== '' ? (
-                          <>
-                            <h4 className='text-[24px] font-normal'>{Series.filter((serieObj) => serieObj['value'] === AlunoModalInfo.serie)[0]['label']}</h4>
-                            <span className="icon-[gravity-ui--pencil-to-square] w-[16px]"></span>
-                          </>
-                        ) : (
-                          <h4> </h4>
-                        )
-                  )
-                }
-              </div>
-              {/* CPF */}
-              <div className='flex flex-row items-center space-x-2'>
-                {
-                  editCpf ? (
-                    <input id='input-cpf' 
-                      value={updCpf}
-                      type="text" 
-                      placeholder='Ex.: 000.000.000-01'
-                      onChange={(e) => setUpdCpf(e.target.value)}
-                      className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
-                      />
+                  editName ? (
+                      <input id='input-nome' 
+                        value={updNome} 
+                        type="text" 
+                        placeholder='Ex.: José da Silva'
+                        onChange={(e) => setUpdNome(e.target.value)}
+                        className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                        />
                   ) : (
                     <>
-                      <p className='text-[16px] font-light tracking-wide'> {updCpf} </p>
-                      <span className="icon-[gravity-ui--pencil-to-square] w-[16px]"></span>
+                      <h3 className='md:text-4xl text-[30px] font-medium'>{AlunoModalInfo['nome']}</h3>
+                      <button
+                      onClick={() => { setEditName(true); setEditCpf(false); setEditSerie(false); }}
+                      className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group hover:bg-[#DDE0E9] transition duration-75'>
+                        <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full filter group-hover:invert transition duration-75"></span>
+                      </button>
                     </>
                   )
                 }
-              </div>
+                </div>
+                {/* SERIE */}
+                <div className='flex flex-row items-center space-x-2'>
+                  {
+                    editSerie ? (
+                      <select id='input-serie'
+                        className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                        value={updSerie} 
+                        onChange={(e) => { setUpdSerie(e.target.value); }}>
+                          {Series.slice(1).map((serieObj) => (
+                            <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
+                              {serieObj['label']}
+                            </option>
+                          ))}
+                      </select>
+                    ) : (
+                          AlunoModalInfo.serie !== '' ? (
+                            <>
+                              <h4 className='md:text-2xl text-[24px] font-normal'>{Series.filter((serieObj) => serieObj['value'] === AlunoModalInfo.serie)[0]['label']}</h4>
+                              <button
+                                onClick={() => { setEditName(false); setEditCpf(false); setEditSerie(true); }}
+                                className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group hover:bg-[#DDE0E9] transition duration-75'>
+                                  <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full filter group-hover:invert transition duration-75"></span>
+                              </button>
+                            </>
+                          ) : (
+                            <h4> </h4>
+                          )
+                    )
+                  }
+                </div>
+                {/* CPF */}
+                <div className='flex flex-row items-center space-x-2'>
+                  {
+                    editCpf ? (
+                      <input id='input-cpf' 
+                        value={updCpf}
+                        type="text" 
+                        placeholder='Ex.: 000.000.000-01'
+                        onChange={(e) => setUpdCpf(e.target.value)}
+                        className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                        />
+                    ) : (
+                      <>
+                        <p className='text-[16px] font-light tracking-wide'> {updCpf} </p>
+                        <button
+                          onClick={() => { setEditName(false); setEditCpf(true); setEditSerie(false); }}
+                          className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group hover:bg-[#DDE0E9] transition duration-75'>
+                            <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full filter group-hover:invert transition duration-75"></span>
+                        </button>
+                      </>
+                    )
+                  }
+                </div>
 
-              <div>
-                <p className='text-[16px] font-light tracking-wide'> {updMatricula} </p>
-              </div>
+                <div>
+                  <p className='text-[16px] font-light tracking-wide'> {updMatricula} </p>
+                </div>
 
+              </div>
             </div>
-          </div>
-          <div className='flex flex-row justify-evenly'>
-          <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg'
-            disabled={((isLoading) || (buttonClicked))}
-            onClick={(e) => {
-              e.preventDefault();
-              clearForms();
-              CloseInfoModal(e);
-            }}>
-              Fechar
-            </button>
-            <button className='w-[20vw] bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg' 
-            disabled={((isLoading) || (buttonClicked))}
-            onClick={(e) => {
-              e.preventDefault();
-              console.log(`Updating alunoInfo ${updMatricula}`);
-              const data = { nome: updNome, cpf: updCpf, serie: updSerie};
-              console.log(data);
-              
-              handleUpdateAlunoRequest(updMatricula, data).then(
-                () => {
-                  handleRequest();
-                  handleTotalAlunosRequest(filterSelectedSeries);
+            <div className='flex flex-row justify-between w-full h-[20%]'>
+              <button className='w-[49%] bg-[#25251D] font-sans text-base md:text-3xl tracking-wide text-[#FFFFFF] rounded-lg'
+                disabled={((isLoading) || (buttonClicked))}
+                onClick={(e) => {
+                  e.preventDefault();
                   clearForms();
                   CloseInfoModal(e);
-                }
-              );
-            }}>
-              Atualizar
-            </button>
+                  setEditCpf(false);
+                  setEditName(false);
+                  setEditSerie(false);
+                }}>
+                  Fechar
+              </button>
+              <div className='w-[49%] flex flex-row justify-between'>
+                <button className='w-[49%] bg-[#25251D] font-sans text-base md:text-2xl tracking-wide text-[#FFFFFF] rounded-lg'
+                  disabled={((isLoading) || (buttonClicked))}
+                  onClick={() => {
+                    setEditCpf(false);
+                    setEditName(false);
+                    setEditSerie(false);
+                  }}>
+                  Descartar
+                </button>
+                <button className='w-[49%] bg-[#25251D] font-sans text-base md:text-2xl tracking-wide text-[#FFFFFF] rounded-lg' 
+                  disabled={((isLoading) || (buttonClicked))}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    console.log(`Updating alunoInfo ${updMatricula}`);
+                    const data = { nome: updNome, cpf: updCpf, serie: updSerie};
+                    console.log(data);
+                    
+                    handleUpdateAlunoRequest(updMatricula, data).then(
+                      () => {
+                        handleRequest();
+                        handleTotalAlunosRequest(filterSelectedSeries);
+                        clearForms();
+                        CloseInfoModal(e);
+                      }
+                    );
+                  }}>
+                    Atualizar
+                </button>
+              </div>
+            </div>
           </div>
       </Modal>
+        )
+      }
+      
 
       {/* ADD ALUNO */}
       <Modal style={modalStyles}
@@ -581,7 +629,7 @@ function App() {
           <div className='flex flex-col w-[95%] bg-[#D4D4D4] min-h-[10vh] max-h-[40vh] overflow-y-scroll' id='AlunosWrapper'>
             <table className='border-collapse w-[full]'>
               <thead className='sticky top-[0] z-[1] bg-[#D6D6D6] shadow-lg'>
-                <tr>
+                <tr className='bg-[#AEAEAE]'>
                   <th className='text-3xl text-center'>Nome</th>
                   <th className='text-3xl text-center'>Matrícula</th>
                   <th className='text-3xl text-center'>Série</th>
@@ -597,7 +645,7 @@ function App() {
                 (
                   console.log('ALUNOS:', Alunos),
                   Alunos.map((aluno: any) => (
-                    <tr key={aluno.matricula}>
+                    <tr className='even:bg-[#CACACA] odd:bg-[#D6D6D6]' key={aluno.matricula}>
                       <td className='text-base border text-center'>{aluno.nome}</td>
                       <td className='text-base border text-center'>{aluno.matricula}</td>
                       <td className='text-base border text-center'>
@@ -607,33 +655,31 @@ function App() {
                         {
                           (renderOption === 'delete') && (SelectedMatricula === aluno.matricula) ? 
                           <>
-                            <div className='flex flex-col justify-center items-center'>
-                              <div className='flex flex-row justify-center items-center'>
-                                <button className='h-[32px] w-[32px] bg-green-600 rounded-3xl mx-1' onClick={() => {
-                                  handleDeleteAlunoRequest(aluno.matricula).then(
-                                    () => {
-                                      handleRequest();
-                                      handleTotalAlunosRequest(filterSelectedSeries);
-                                      setShowConfirm(!ShowConfirm);
-                                    }
-                                  );
-                                  console.log('Confirmando deleção...');
-                                }}>
-                                  <span className="icon-[gravity-ui--circle-check] w-full h-full"></span>
-                                </button>                           
-                                <button className='h-[32px] w-[32px] bg-red-600 rounded-3xl mx-1' onClick={() => {
-                                  setShowConfirm(!ShowConfirm);
-                                  console.log('Cancelando deleção...');
-                                }}>
-                                  <span className="icon-[gravity-ui--circle-xmark] w-full h-full"></span>
-                                </button>
-                              </div>
+                            <div className='flex flex-row justify-center items-center'>
+                              <button className='w-[2vw] h-[4vh] transition duration-150 bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
+                                handleDeleteAlunoRequest(aluno.matricula).then(
+                                  () => {
+                                    handleRequest();
+                                    handleTotalAlunosRequest(filterSelectedSeries);
+                                    setShowConfirm(!ShowConfirm);
+                                  }
+                                );
+                                console.log('Confirmando deleção...');
+                              }}>
+                                <span className="icon-[gravity-ui--circle-check] w-full h-full filter invert"></span>
+                              </button>                           
+                              <button className='w-[2vw] h-[4vh] transition duration-150 bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
+                                setShowConfirm(!ShowConfirm);
+                                console.log('Cancelando deleção...');
+                              }}>
+                                <span className="icon-[gravity-ui--circle-xmark] w-full h-full filter invert"></span>
+                              </button>
                             </div>
                           </> :
 
                           <>
                             <div className='flex flex-row mx-4 justify-center items-center'>
-                              <button className='bg-[#25251D] text-[#FFFFFF] w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#25251D] text-[#FFFFFF] transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 handleAlunoInfoRequest(aluno.matricula).then(
                                   () => {
                                     OpenInfoModal();
@@ -642,7 +688,7 @@ function App() {
                               }}>
                                 <span className="icon-[gravity-ui--square-list-ul] w-full h-full"></span>
                               </button>
-                              <button className='bg-[#25251D] text-[#FFFFFF] w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#25251D] text-[#FFFFFF] transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 setSelectedMatricula(aluno.matricula);
                                 setSaveOption(false);
                                 setShowConfirm(true);
@@ -674,7 +720,7 @@ function App() {
             </div>
 
             <div className='ml-auto flex flex-row items-center justify-evenly space-x-auto w-[16vw] h-[8vh]'>
-              <button className='bg-[#25251D] text-[#FFFFFF] p-[4px] rounded-lg w-[3vw] h-[6vh]'
+              <button className='bg-[#25251D] text-[#FFFFFF] p-1 justify-center items-center rounded-lg w-[20%] h-[70%]'
               onClick={() => {
                 setAlunos([{}]);
                 handleRequest();
@@ -686,15 +732,15 @@ function App() {
                 <img className='w-full h-full filter invert' src={Images.atualizar as string} alt="Atualizar"/>
               </button>
 
-              <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[3vw] h-[6vh] p-[4px]' disabled={page === 1} onClick={() => {
+              <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[30%] h-[70%] p-1' disabled={page === 1} onClick={() => {
                 handlePreviousPageRequest();
               }}>
-                <span className="icon-[gravity-ui--arrow-shape-left] w-full h-full"></span>
+                <span id='anterior-icon' className="icon-[gravity-ui--arrow-shape-left] w-full h-full"></span>
               </button>
-              <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[3vw] h-[6vh] p-[4px]' disabled={nextEnabled} onClick={() => {
+              <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[30%] h-[70%] p-1' disabled={nextEnabled} onClick={() => {
                 handleNextPageRequest();
               }}>
-                <span className="icon-[gravity-ui--arrow-shape-right] w-full h-full"></span>
+                <span id='proximo-icon' className="icon-[gravity-ui--arrow-shape-right] w-full h-full"></span>
               </button>
             
             </div>
