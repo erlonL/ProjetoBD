@@ -92,6 +92,7 @@ function App() {
   const [updCpf, setUpdCpf] = useState('');
   const [updSerie, setUpdSerie] = useState('');
   const [updMatricula, setUpdMatricula] = useState('');
+  const [updImgURL, setUpdImgURL] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -282,23 +283,27 @@ function App() {
     }
   }, [SaveOption, ShowConfirm]);
 
-  const [AlunoModalInfo, setAlunoModalInfo] = useState({cpf: '', nome: '', serie: '', matricula: ''});
+  const [AlunoModalInfo, setAlunoModalInfo] = useState({cpf: '', nome: '', serie: '', matricula: '', imgURL: ''});
 
   useEffect(() => {
     setUpdCpf(AlunoModalInfo['cpf']);
     setUpdNome(AlunoModalInfo['nome']);
     setUpdSerie(AlunoModalInfo['serie']);
     setUpdMatricula(AlunoModalInfo['matricula']);
+    setUpdImgURL(AlunoModalInfo['imgURL']);
   }, [AlunoModalInfo]);
 
   const handleAlunoInfoRequest = async (matricula: string) => {
     try {
       console.log(`Requesting ${matricula} info...`);
       const response = await fetch(`/api/Aluno/${matricula}`);
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const data = await response.json();
+      const infoData = await response.json();
+
+      const data = { ...infoData, imgURL: '' };
       setAlunoModalInfo(data);
       console.log(data);
     }catch(e){
@@ -306,6 +311,92 @@ function App() {
       return;
     } finally {
       console.log('Aluno Info Request Succesfully');
+    }
+  }
+
+  const handleAlunoImageRequest = async (matricula: string) => {
+    try {
+      console.log(`Requesting ${matricula} image...`);
+      const response = await fetch(`/api/image/${matricula}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json() || { url: '' };
+
+      setAlunoModalInfo((prevState: any) => {
+        return { ...prevState, imgURL: data.url === null ? '' : data.url};
+      });
+      console.log(data);
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('Aluno Image Request Succesfully');
+    }
+  }
+
+  const handleAlunoImageCreateRequest = async (matricula: string, imgURL: string) => {
+    try {
+      console.log(`Requesting image creation for ${matricula}...`);
+      const response = await fetch('/api/createImage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ matricula, url: imgURL })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseJSON = await response.json();
+      console.log(responseJSON);
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('Image created successfully');
+    }
+  }
+
+  const handleAlunoImageDeleteRequest = async (matricula: string) => {
+    try {
+      console.log(`Requesting image deletion for ${matricula}...`);
+      const response = await fetch(`/api/deleteImage?matricula=${matricula}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseJSON = await response.json();
+      console.log(responseJSON);
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('Image deleted successfully');
+    }
+  }
+
+  const handleAlunoImageUpdateRequest = async (matricula: string, imgURL: string) => {
+    try {
+      console.log(`Requesting image update for ${matricula}...`);
+      const response = await fetch('/api/updateImage', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ matricula, imgURL })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const responseJSON = await response.json();
+      console.log(responseJSON);
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('Image updated successfully');
     }
   }
 
@@ -326,11 +417,13 @@ function App() {
   const [editName, setEditName] = useState(false);
   const [editSerie, setEditSerie] = useState(false);
   const [editCpf, setEditCpf] = useState(false);
+  const [editImg, setEditImg] = useState(false);
 
   const handleInfoClose = () => {
     setEditCpf(false);
     setEditName(false);
     setEditSerie(false);
+    setEditImg(false);
 
     setUpdCpf(AlunoModalInfo['cpf']);
     setUpdNome(AlunoModalInfo['nome']);
@@ -369,12 +462,49 @@ function App() {
         shouldCloseOnOverlayClick={false}
         >
           <div id='InfoModalWrapper' className='flex flex-col h-full w-full overflow-y-scroll'>
-            <div className='flex flex-row w-full h-full space-x-4 items-center'>
-              <div id='alunoIMG' className='w-[40%] h-[80%] border rounded-lg justify-center items-center flex'>
-                <span className="icon-[gravity-ui--person] w-[60%] h-[60%]"></span>
+            <div className='flex flex-col lg:flex-row w-full h-full 3xl:space-x-4 items-center'>
+              <div className='flex flex-col lg:w-[40%] lg:h-[80%] w-[40%] h-[40%]'>
+                <div id='alunoIMG' className='w-full h-full border rounded-lg inline-block relative'>
+                  {
+                    AlunoModalInfo.imgURL !== '' ? (
+                      <img src={updImgURL} alt='alunoIMG' className='w-full h-full rounded-lg' />
+                    ) : (
+                      <span className="icon-[gravity-ui--person] w-full h-full"></span>
+                    )
+                  }
+                  <button 
+                  className='lg:w-[20%] lg:h-[20%] w-[25%] h-[25%] absolute bottom-0 right-0'
+                  onClick={() => {
+                    setEditImg(true);
+
+                    setUpdNome(updNome);
+                    setUpdCpf(updCpf);
+                    setUpdSerie(updSerie);
+
+                    setEditName(false);
+                    setEditCpf(false);
+                    setEditSerie(false);
+                  }}>
+                    <span className="icon-[gravity-ui--camera] w-full h-full"></span>
+                  </button>
+                </div>
+                {
+                  editImg ? (
+                    <div className='flex flex-row w-[85%] h-[15%]'>
+                      <input id='input-img' 
+                        value={updImgURL}
+                        type="text" 
+                        placeholder='Ex.: https://www.example.com/image.jpg'
+                        onChange={(e) => setUpdImgURL(e.target.value)}
+                        className='bg-[#25251D] text-[#FFFFFF] py-3 my-3 rounded-lg lg:w-[full] w-full font-serif text-lg' />
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                }
               </div>
 
-              <div id='alunoInfo' className='flex flex-col w-[60%] h-[80%]'>
+              <div id='alunoInfo' className='flex flex-col lg:w-[60%] lg:h-[80%] w-[60%] h-[40%]'>
                 {/* NAME */}
                 <div className='flex flex-row items-center space-x-2'>
                 {
@@ -486,8 +616,8 @@ function App() {
 
               </div>
             </div>
-            <div className='flex flex-row justify-between w-full h-[20%]'>
-              <button className='w-[49%] bg-[#25251D] font-sans text-base md:text-3xl tracking-wide text-[#FFFFFF] rounded-lg'
+            <div className='flex flex-row justify-between lg:w-full w-[95%] lg:h-[20%] h-[30%]'>
+              <button className='lg:w-[49%] w-[28%] bg-[#25251D] font-sans text-base md:text-3xl tracking-wide text-[#FFFFFF] rounded-lg'
                 disabled={((isLoading) || (buttonClicked))}
                 onClick={(e) => {
                   handleInfoClose();
@@ -495,7 +625,7 @@ function App() {
                 }}>
                   Fechar
               </button>
-              <div className='w-[49%] flex flex-row justify-between'>
+              <div className='lg:w-[49%] w-[68%] flex flex-row justify-between'>
                 <button className='w-[49%] bg-[#25251D] font-sans text-base md:text-2xl tracking-wide text-[#FFFFFF] rounded-lg'
                   disabled={((isLoading) || (buttonClicked))}
                   onClick={() => {
@@ -519,6 +649,11 @@ function App() {
                         CloseInfoModal(e);
                       }
                     );
+                    if((AlunoModalInfo.imgURL === '') && (updImgURL !== '')){
+                      handleAlunoImageCreateRequest(updMatricula, updImgURL);
+                    } else if ((AlunoModalInfo.imgURL !== '') && (updImgURL !== '')){
+                      handleAlunoImageUpdateRequest(updMatricula, updImgURL);
+                    }
                   }}>
                     Atualizar
                 </button>
@@ -625,14 +760,14 @@ function App() {
 
       {/* HEADER */}
       <div className='w-screen py-4 h-[20%] justify-center items-center top-0 text-center bg-[#25455B]' id='header'>
-        <span className='text-4xl font-bold py-4 text-[#FFFFFF]'>ESCOLA CONCEIÇÃO DA SILVA</span>
+        <span className='text-3xl font-bold py-4 text-[#FFFFFF]'>ESCOLA CONCEIÇÃO DA SILVA</span>
       </div>
 
       {/* TABLE WRAPPER */}
       <div className='flex flex-col justify-center items-center my-8 w-[80%] min-h-fit bg-[#D4D4D4]' id='TableWrapper'>
         {/* TABLE TITLE */}
-        <div className='w-[95%] my-4 justify-center text-center bg-[#D4D4D4]'>
-          <h2 className='text-3xl font-serif'>Lista de Alunos</h2>
+        <div className='w-[95%] my-8 justify-center text-center bg-[#D4D4D4]'>
+          <h2 className='text-5xl font-sans font-extrabold text-[#353535]'>LISTA DE ALUNOS</h2>
         </div>
 
         {/* TABLE */}
@@ -689,7 +824,7 @@ function App() {
                           (renderOption === 'delete') && (SelectedMatricula === aluno.matricula) ? 
                           <>
                             <div className='flex flex-row justify-center items-center'>
-                              <button className='w-[2vw] h-[4vh] transition duration-150 group bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
+                              <button className='w-[4vw] h-[4vh] lg:w-[2vw] transition duration-150 group bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
                                 handleDeleteAlunoRequest(aluno.matricula).then(
                                   () => {
                                     handleRequest();
@@ -701,7 +836,7 @@ function App() {
                               }}>
                                 <span className="icon-[gravity-ui--circle-check] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
                               </button>                           
-                              <button className='w-[2vw] h-[4vh] transition duration-150 group bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
+                              <button className='w-[4vw] h-[4vh] lg:w-[2vw] transition duration-150 group bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
                                 setShowConfirm(!ShowConfirm);
                                 console.log('Cancelando deleção...');
                               }}>
@@ -712,16 +847,20 @@ function App() {
 
                           <>
                             <div className='flex flex-row mx-4 justify-center items-center'>
-                              <button className='bg-[#14181d] group transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#14181d] group transition duration-150 w-[4vw] h-[4vh] lg:w-[2vw] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 handleAlunoInfoRequest(aluno.matricula).then(
                                   () => {
-                                    OpenInfoModal();
+                                    handleAlunoImageRequest(aluno.matricula).then(
+                                      () => {
+                                        OpenInfoModal();
+                                      }
+                                    )
                                   }
                                 )
                               }}>
                                 <span className="icon-[gravity-ui--square-list-ul] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
                               </button>
-                              <button className='bg-[#14181d] group transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#14181d] group transition duration-150 w-[4vw] h-[4vh] lg:w-[2vw] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 setSelectedMatricula(aluno.matricula);
                                 setSaveOption(false);
                                 setShowConfirm(true);
@@ -753,7 +892,7 @@ function App() {
             </div>
 
             <div className='ml-auto flex flex-row items-center justify-evenly space-x-auto w-[16vw] h-[8vh]'>
-              <button className='bg-[#25251D] text-[#FFFFFF] p-1 justify-center items-center rounded-lg w-[20%] h-[70%]'
+              <button className='bg-[#25251D] text-[#FFFFFF] p-1 justify-center items-center rounded-lg w-[30%] lg:w-[18%] h-[45%] lg:h-[70%]'
               onClick={() => {
                 setAlunos([{}]);
                 handleRequest();
@@ -765,12 +904,12 @@ function App() {
                 <img className='w-full h-full filter invert' src={Images.atualizar as string} alt="Atualizar"/>
               </button>
 
-              <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[30%] h-[70%] p-1' disabled={page === 1} onClick={() => {
+              <button id='PREVIOUS-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[30%] h-[45%] lg:w-[30%] lg:h-[70%] p-1' disabled={page === 1} onClick={() => {
                 handlePreviousPageRequest();
               }}>
                 <span id='anterior-icon' className="icon-[gravity-ui--arrow-shape-left] w-full h-full"></span>
               </button>
-              <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[30%] h-[70%] p-1' disabled={nextEnabled} onClick={() => {
+              <button id='NEXT-BTN' className='bg-[#25251D] text-[#FFFFFF] rounded-lg w-[30%] h-[45%] lg:w-[30%] lg:h-[70%] p-1' disabled={nextEnabled} onClick={() => {
                 handleNextPageRequest();
               }}>
                 <span id='proximo-icon' className="icon-[gravity-ui--arrow-shape-right] w-full h-full"></span>

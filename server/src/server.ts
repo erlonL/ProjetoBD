@@ -1,5 +1,6 @@
 import express from 'express';
 import AlunoController from './controllers/AlunoController';
+import PIMGController from './controllers/ProfileImagesController';
 
 const app = express();
 app.use(express.json());
@@ -9,6 +10,7 @@ app.get('/api', (request, response) => {
     response.send('Hello World');
 });
 
+// alunos
 app.post('/api/createAluno', AlunoController.createAluno);
 
 app.get('/api/listAlunos', AlunoController.listAlunos);
@@ -21,7 +23,18 @@ app.delete('/api/deleteAluno', AlunoController.deleteAluno);
 
 app.get('/api/totalAlunos', AlunoController.totalAlunos);
 
-app.get('/api/getColumns', AlunoController.getColumns);
+app.get('/api/getAlunoColumns', AlunoController.getColumns);
+
+
+// images
+app.get('/api/image/:matricula', PIMGController.getProfileImage);
+
+app.post('/api/createImage', PIMGController.createProfileImage);
+
+app.delete('/api/deleteImage', PIMGController.deleteProfileImage);
+
+app.put('/api/updateImage', PIMGController.updateProfileImage);
+
 
 // app.post('/api/createAlunoMany', AlunoController.createAlunoMany);
 
