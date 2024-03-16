@@ -327,23 +327,34 @@ function App() {
   const [editSerie, setEditSerie] = useState(false);
   const [editCpf, setEditCpf] = useState(false);
 
-  useEffect(() => {
-    if(editSerie === false){
-      setUpdSerie(AlunoModalInfo['serie']);
-    }
-  }, [editSerie, AlunoModalInfo])
+  const handleInfoClose = () => {
+    setEditCpf(false);
+    setEditName(false);
+    setEditSerie(false);
 
-  useEffect(() => {
-    if(editName === false){
-      setUpdNome(AlunoModalInfo['nome']);
-    }
-  }, [editName, AlunoModalInfo])
+    setUpdCpf(AlunoModalInfo['cpf']);
+    setUpdNome(AlunoModalInfo['nome']);
+    setUpdSerie(AlunoModalInfo['serie']);
+    setUpdMatricula(AlunoModalInfo['matricula']);
+  }
 
-  useEffect(() => {
-    if(editCpf === false){
-      setUpdCpf(AlunoModalInfo['cpf']);
-    }
-  }, [editCpf, AlunoModalInfo])
+  // useEffect(() => {
+  //   if(editSerie === false){
+  //     setUpdSerie(AlunoModalInfo['serie']);
+  //   }
+  // }, [editSerie, AlunoModalInfo])
+
+  // useEffect(() => {
+  //   if(editName === false){
+  //     setUpdNome(AlunoModalInfo['nome']);
+  //   }
+  // }, [editName, AlunoModalInfo])
+
+  // useEffect(() => {
+  //   if(editCpf === false){
+  //     setUpdCpf(AlunoModalInfo['cpf']);
+  //   }
+  // }, [editCpf, AlunoModalInfo])
 
   return (
     <div className='bg-[#353535] justify-center items-center h-full w-full flex flex-col'>
@@ -368,20 +379,31 @@ function App() {
                 <div className='flex flex-row items-center space-x-2'>
                 {
                   editName ? (
-                      <input id='input-nome' 
+                      <input 
+                        id='input-nome' 
                         value={updNome} 
                         type="text" 
                         placeholder='Ex.: José da Silva'
                         onChange={(e) => setUpdNome(e.target.value)}
-                        className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                        autoFocus={true}
+                        className='bg-transparent text-[#FFFFFF] text-4xl min-w-fit min-h-fit overflow-auto break-all font-medium shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
                         />
                   ) : (
                     <>
-                      <h3 className='md:text-4xl text-[30px] font-medium'>{AlunoModalInfo['nome']}</h3>
+                      <h3 className='md:text-4xl text-[30px] w-50% text-[#CDCFD3] font-medium'>{AlunoModalInfo['nome']}</h3>
                       <button
-                      onClick={() => { setEditName(true); setEditCpf(false); setEditSerie(false); }}
-                      className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group hover:bg-[#DDE0E9] transition duration-75'>
-                        <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full filter group-hover:invert transition duration-75"></span>
+                      onClick={() => { 
+                        setEditName(true);
+
+                        setUpdCpf(updCpf);
+                        setUpdSerie(updSerie);
+                        
+                        setEditCpf(false);
+                        setEditSerie(false);
+                        // setUpdSerie(Series.filter((serieObj) => serieObj['value'] === updSerie)[0]['label'])
+                      }}
+                      className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
+                        <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
                       </button>
                     </>
                   )
@@ -392,11 +414,11 @@ function App() {
                   {
                     editSerie ? (
                       <select id='input-serie'
-                        className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                        className='bg-gradient-to-r from-[#747C87] from-90% to-[#25251D] text-[#FFFFFF] sm:rounded-lg rounded-none min-w-fit font-normal text-2xl shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
                         value={updSerie} 
                         onChange={(e) => { setUpdSerie(e.target.value); }}>
                           {Series.slice(1).map((serieObj) => (
-                            <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
+                            <option className='text-lg font-normal' key={serieObj['label']} value={serieObj['value']}>
                               {serieObj['label']}
                             </option>
                           ))}
@@ -404,11 +426,20 @@ function App() {
                     ) : (
                           AlunoModalInfo.serie !== '' ? (
                             <>
-                              <h4 className='md:text-2xl text-[24px] font-normal'>{Series.filter((serieObj) => serieObj['value'] === AlunoModalInfo.serie)[0]['label']}</h4>
+                              <h4 className='md:text-2xl text-[24px] font-normal text-[#CDCFD3]'>{Series.filter((serieObj) => serieObj['value'] === AlunoModalInfo.serie)[0]['label']}</h4>
                               <button
-                                onClick={() => { setEditName(false); setEditCpf(false); setEditSerie(true); }}
-                                className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group hover:bg-[#DDE0E9] transition duration-75'>
-                                  <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full filter group-hover:invert transition duration-75"></span>
+                                onClick={() => {
+                                  setEditSerie(true);
+
+                                  setUpdNome(updNome);
+                                  setUpdCpf(updCpf);
+
+                                  setEditName(false);
+                                  setEditCpf(false); 
+
+                                  }}
+                                className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
+                                  <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
                               </button>
                             </>
                           ) : (
@@ -425,16 +456,24 @@ function App() {
                         value={updCpf}
                         type="text" 
                         placeholder='Ex.: 000.000.000-01'
+                        autoFocus={true}
                         onChange={(e) => setUpdCpf(e.target.value)}
-                        className='bg-[#25251D] text-[#FFFFFF] p-2 rounded-lg w-[20vw] font-serif text-lg' 
+                        className='text-[#FFFFFF] tracking-wide text-[16px] text-lg bg-transparent min-w-fit min-h-fit overflow-auto break-all font-light shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
                         />
                     ) : (
                       <>
-                        <p className='text-[16px] font-light tracking-wide'> {updCpf} </p>
+                        <p className='md:text-[16px] text-[#CDCFD3] text-lg font-light tracking-wide'> {updCpf} </p>
                         <button
-                          onClick={() => { setEditName(false); setEditCpf(true); setEditSerie(false); }}
-                          className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group hover:bg-[#DDE0E9] transition duration-75'>
-                            <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full filter group-hover:invert transition duration-75"></span>
+                          onClick={() => {
+                            setEditCpf(true);
+                            setEditSerie(false);
+                            setEditName(false); 
+
+                            setUpdNome(updNome);
+                            setUpdSerie(updSerie);
+                            }}
+                          className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
+                            <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
                         </button>
                       </>
                     )
@@ -442,7 +481,7 @@ function App() {
                 </div>
 
                 <div>
-                  <p className='text-[16px] font-light tracking-wide'> {updMatricula} </p>
+                  <p className='md:text-[16px] text-lg text-[#CDCFD3] font-light tracking-wide'> {updMatricula} </p>
                 </div>
 
               </div>
@@ -451,12 +490,8 @@ function App() {
               <button className='w-[49%] bg-[#25251D] font-sans text-base md:text-3xl tracking-wide text-[#FFFFFF] rounded-lg'
                 disabled={((isLoading) || (buttonClicked))}
                 onClick={(e) => {
-                  e.preventDefault();
-                  clearForms();
+                  handleInfoClose();
                   CloseInfoModal(e);
-                  setEditCpf(false);
-                  setEditName(false);
-                  setEditSerie(false);
                 }}>
                   Fechar
               </button>
@@ -464,9 +499,7 @@ function App() {
                 <button className='w-[49%] bg-[#25251D] font-sans text-base md:text-2xl tracking-wide text-[#FFFFFF] rounded-lg'
                   disabled={((isLoading) || (buttonClicked))}
                   onClick={() => {
-                    setEditCpf(false);
-                    setEditName(false);
-                    setEditSerie(false);
+                    handleInfoClose();
                   }}>
                   Descartar
                 </button>
@@ -482,7 +515,7 @@ function App() {
                       () => {
                         handleRequest();
                         handleTotalAlunosRequest(filterSelectedSeries);
-                        clearForms();
+                        handleInfoClose();
                         CloseInfoModal(e);
                       }
                     );
@@ -656,7 +689,7 @@ function App() {
                           (renderOption === 'delete') && (SelectedMatricula === aluno.matricula) ? 
                           <>
                             <div className='flex flex-row justify-center items-center'>
-                              <button className='w-[2vw] h-[4vh] transition duration-150 bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
+                              <button className='w-[2vw] h-[4vh] transition duration-150 group bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
                                 handleDeleteAlunoRequest(aluno.matricula).then(
                                   () => {
                                     handleRequest();
@@ -666,35 +699,35 @@ function App() {
                                 );
                                 console.log('Confirmando deleção...');
                               }}>
-                                <span className="icon-[gravity-ui--circle-check] w-full h-full filter invert"></span>
+                                <span className="icon-[gravity-ui--circle-check] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
                               </button>                           
-                              <button className='w-[2vw] h-[4vh] transition duration-150 bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
+                              <button className='w-[2vw] h-[4vh] transition duration-150 group bg-[#25251D] rounded-lg p-1 mx-1 my-2' onClick={() => {
                                 setShowConfirm(!ShowConfirm);
                                 console.log('Cancelando deleção...');
                               }}>
-                                <span className="icon-[gravity-ui--circle-xmark] w-full h-full filter invert"></span>
+                                <span className="icon-[gravity-ui--circle-xmark] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
                               </button>
                             </div>
                           </> :
 
                           <>
                             <div className='flex flex-row mx-4 justify-center items-center'>
-                              <button className='bg-[#25251D] text-[#FFFFFF] transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#14181d] group transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 handleAlunoInfoRequest(aluno.matricula).then(
                                   () => {
                                     OpenInfoModal();
                                   }
                                 )
                               }}>
-                                <span className="icon-[gravity-ui--square-list-ul] w-full h-full"></span>
+                                <span className="icon-[gravity-ui--square-list-ul] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
                               </button>
-                              <button className='bg-[#25251D] text-[#FFFFFF] transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
+                              <button className='bg-[#14181d] group transition duration-150 w-[2vw] h-[4vh] p-1 mx-1 my-2 rounded-lg' onClick={() => {
                                 setSelectedMatricula(aluno.matricula);
                                 setSaveOption(false);
                                 setShowConfirm(true);
                                 console.log('Deletando aluno...');
                               }} >
-                                <span className="icon-[gravity-ui--trash-bin] w-full h-full"></span>
+                                <span className="icon-[gravity-ui--trash-bin] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
                               </button>
                             </div>
                           </>
