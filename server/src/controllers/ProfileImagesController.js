@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { prisma } from '../database';
 
 export default {
-    async updateProfileImage(req: Request, res: Response) {
+    async updateProfileImage(req, res) {
         try{
             const { matricula, url } = req.body;
 
