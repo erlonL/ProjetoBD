@@ -51,7 +51,10 @@ async function createDatabase(){
         await pool.execute(`CREATE DATABASE ${process.env.MYSQL_DATABASE}`)
         await pool.query(`USE ${process.env.MYSQL_DATABASE}`)
         await createTable().then(
-            populateDatabase()
+            populateDatabase().then(
+                await pool.commit(),
+                await pool.end()                
+            )
         )
         console.log('Database created successfully')
     } catch (error) {
