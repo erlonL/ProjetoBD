@@ -15,16 +15,9 @@ app.get('/api/listAlunos', AlunoController.listAlunos);
 app.post('/api/createAluno', AlunoController.createAluno);
 app.get('/api/totalAlunos', AlunoController.totalAlunos);
 app.delete('/api/deleteAluno', AlunoController.deleteAluno);
-// 
-// 
+app.put('/api/updateAluno/:matricula', AlunoController.updateAluno);
+//
 // app.get('/api/Aluno/:matricula', AlunoController.findAluno);
-// 
-// app.put('/api/updateAluno/:matricula', AlunoController.updateAluno);
-// 
-// 
-// 
-// app.get('/api/getAlunoColumns', AlunoController.getColumns);
-// 
 // 
 // // images
 // app.get('/api/image/:matricula', PIMGController.getProfileImage);

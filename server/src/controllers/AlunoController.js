@@ -166,11 +166,36 @@ async function deleteAluno(req, res) {
     }
 }
 
+async function updateAluno(req, res) {
+    try{
+        const { matricula } = req.params;
+        const { nome, cpf, serie } = req.body;
+
+        const [aluno] = await pool.query(`
+        UPDATE Alunos
+        SET nome = ?, cpf = ?, serie = ?
+        WHERE matricula = ?`, [nome, cpf, serie, matricula]);
+
+        if(aluno.affectedRows === 1){
+            return res.json({
+                message: "Aluno atualizado com sucesso"
+            })
+        }
+
+    }catch(error){
+        return res.status(400).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 const AlunoController = {
     createAluno,
     listAlunos,
     totalAlunos,
-    deleteAluno
+    deleteAluno,
+    updateAluno
 }
 
 export default AlunoController;
