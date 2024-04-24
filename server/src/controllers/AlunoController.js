@@ -14,28 +14,17 @@ async function createAluno(req, res) {
             })
         }
 
-        let [db_id] = await pool.query("SELECT id FROM Alunos ORDER BY id DESC LIMIT 1");
-
-        if(!db_id){
-            db_id = [{ id: 0 }];
-        }
-
-        db_id = db_id[0].id;
-
-        const matricula = `20240${db_id}`;
-        
         const data = {
             nome,
             cpf,
-            serie,
-            matricula
+            serie
         }
 
         const [aluno] = await pool.query(`
         INSERT INTO Alunos 
-        (matricula, cpf, nome, serie) 
-        VALUES (?, ?, ?, ?)`, 
-        [matricula, cpf, nome, serie]);
+        (cpf, nome, serie) 
+        VALUES (?, ?, ?)`, 
+        [cpf, nome, serie]);
 
         if(aluno.affectedRows === 1){
             return res.status(201).json(data);
@@ -86,7 +75,7 @@ async function totalAlunos(req, res) {
             try{
                 const [total] = await pool.query("SELECT COUNT(*) as total FROM Alunos");
 
-                return res.json(total.total);
+                return res.json(total[0].total);
             }catch(error){
                 return res.status(400).json({
                     error: true,
@@ -100,7 +89,7 @@ async function totalAlunos(req, res) {
         FROM Alunos
         WHERE serie = ?`, [serie]);
 
-        return res.json(total.total);
+        return res.json(total[0].total);
     }catch(error){
         return res.status(400).json({
             error: true,
@@ -190,12 +179,37 @@ async function updateAluno(req, res) {
     }
 }
 
+async function findAluno(req, res) {
+    try{
+        const { matricula } = req.params;
+
+        const [aluno] = await pool.query(`
+        SELECT * FROM Alunos
+        WHERE matricula = ?`, [matricula]);
+
+        if(aluno.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Aluno não encontrado"
+            })
+        }
+
+        return res.json(aluno[0]);
+    }catch(error){
+        return res.status(400).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 const AlunoController = {
     createAluno,
     listAlunos,
     totalAlunos,
     deleteAluno,
-    updateAluno
+    updateAluno,
+    findAluno
 }
 
 export default AlunoController;
