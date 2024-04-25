@@ -20,8 +20,17 @@ const Images = {
   github: _imageList[6]
 }
 
+interface AlunoInfo {
+  nome: string;
+  cpf: string;
+  serie: string;
+  matricula: string;
+  imgURL: string;
+}
+
 
 function App() {
+
   const modalStyles: Modal.Styles = {
     overlay: {
       backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -462,9 +471,11 @@ function App() {
         shouldCloseOnOverlayClick={false}
         >
           <div id='InfoModalWrapper' className='flex flex-col h-full w-full overflow-y-scroll'>
-            <div className='flex flex-col lg:flex-row w-full h-full 3xl:space-x-4 items-center'>
-              <div className='flex flex-col lg:w-[40%] lg:h-[80%] w-[40%] h-[40%]'>
-                <div id='alunoIMG' className='w-full h-full border rounded-lg inline-block relative'>
+            {/*main info*/}
+            <div className='flex flex-col lg:flex-row w-full h-full items-start'>
+              {/*Image wrapper*/}
+              <div className='flex flex-col max-h-[35%] max-w-[35%]'>
+                <div id='alunoIMG' className='w-full h-full border inline-block relative'>
                   {
                     AlunoModalInfo.imgURL !== '' ? (
                       <img src={updImgURL} alt='alunoIMG' className='w-full h-full rounded-lg' />
@@ -473,7 +484,7 @@ function App() {
                     )
                   }
                   <button 
-                  className='lg:w-[20%] lg:h-[20%] w-[25%] h-[25%] absolute bottom-0 right-0'
+                  className='lg:w-[15%] lg:h-[15%] w-[25%] h-[25%] absolute bottom-0 right-0 opacity-70 hover:opacity-100'
                   onClick={() => {
                     setEditImg(true);
 
@@ -485,7 +496,7 @@ function App() {
                     setEditCpf(false);
                     setEditSerie(false);
                   }}>
-                    <span className="icon-[gravity-ui--camera] w-full h-full"></span>
+                    <span className="icon-[carbon--camera] w-full h-full"></span>
                   </button>
                 </div>
                 {
@@ -504,118 +515,149 @@ function App() {
                 }
               </div>
 
-              <div id='alunoInfo' className='flex flex-col lg:w-[60%] lg:h-[80%] w-[60%] h-[40%]'>
-                {/* NAME */}
-                <div className='flex flex-row items-center space-x-2'>
-                {
-                  editName ? (
-                      <input 
-                        id='input-nome' 
-                        value={updNome} 
-                        type="text" 
-                        placeholder='Ex.: José da Silva'
-                        onChange={(e) => setUpdNome(e.target.value)}
-                        autoFocus={true}
-                        className='bg-transparent text-[#FFFFFF] text-4xl min-w-fit min-h-fit overflow-auto break-all font-medium shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
-                        />
-                  ) : (
-                    <>
-                      <h3 className='md:text-4xl text-[30px] w-50% text-[#CDCFD3] font-medium'>{AlunoModalInfo['nome']}</h3>
-                      <button
-                      onClick={() => { 
-                        setEditName(true);
-
-                        setUpdCpf(updCpf);
-                        setUpdSerie(updSerie);
-                        
-                        setEditCpf(false);
-                        setEditSerie(false);
-                        // setUpdSerie(Series.filter((serieObj) => serieObj['value'] === updSerie)[0]['label'])
-                      }}
-                      className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
-                        <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
-                      </button>
-                    </>
-                  )
-                }
+              {/*Info wrapper*/}
+              <div id='alunoInfo' className='flex flex-col w-full h-full'>
+                {/*Aluno Info Header*/}
+                <div className='justify-center items-center flex w-full flex-row bg-[#aeaeae] shadow-lg'>
+                  <h2 className='text-4xl font-bold text-black '>Dados Básicos</h2>
                 </div>
-                {/* SERIE */}
-                <div className='flex flex-row items-center space-x-2'>
+
+                <div className=' [&>*:nth-child(odd)]:bg-[#D6D6D6] [&>*:nth-child(even)]:bg-[#CACACA]'>
+                  {/* Editable NAME */}
+                  <div className='flex flex-row items-center space-x-6'>
+                    <div className='w-[6vw]'>
+                      <label className='text-[24px] font-medium text-black'>
+                        Nome
+                      </label>
+                    </div>
                   {
-                    editSerie ? (
-                      <select id='input-serie'
-                        className='bg-gradient-to-r from-[#747C87] from-90% to-[#25251D] text-[#FFFFFF] sm:rounded-lg rounded-none min-w-fit font-normal text-2xl shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
-                        value={updSerie} 
-                        onChange={(e) => { setUpdSerie(e.target.value); }}>
-                          {Series.slice(1).map((serieObj) => (
-                            <option className='text-lg font-normal' key={serieObj['label']} value={serieObj['value']}>
-                              {serieObj['label']}
-                            </option>
-                          ))}
-                      </select>
-                    ) : (
-                          AlunoModalInfo.serie !== '' ? (
-                            <>
-                              <h4 className='md:text-2xl text-[24px] font-normal text-[#CDCFD3]'>{Series.filter((serieObj) => serieObj['value'] === AlunoModalInfo.serie)[0]['label']}</h4>
-                              <button
-                                onClick={() => {
-                                  setEditSerie(true);
-
-                                  setUpdNome(updNome);
-                                  setUpdCpf(updCpf);
-
-                                  setEditName(false);
-                                  setEditCpf(false); 
-
-                                  }}
-                                className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
-                                  <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
-                              </button>
-                            </>
-                          ) : (
-                            <h4> </h4>
-                          )
-                    )
-                  }
-                </div>
-                {/* CPF */}
-                <div className='flex flex-row items-center space-x-2'>
-                  {
-                    editCpf ? (
-                      <input id='input-cpf' 
-                        value={updCpf}
-                        type="text" 
-                        placeholder='Ex.: 000.000.000-01'
-                        autoFocus={true}
-                        onChange={(e) => setUpdCpf(e.target.value)}
-                        className='text-[#FFFFFF] tracking-wide text-[16px] text-lg bg-transparent min-w-fit min-h-fit overflow-auto break-all font-light shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
-                        />
+                    editName ? (
+                        <input 
+                          id='input-nome' 
+                          value={updNome} 
+                          type="text" 
+                          placeholder='Ex.: José da Silva'
+                          onChange={(e) => setUpdNome(e.target.value)}
+                          autoFocus={true}
+                          className='bg-gradient-to-r from-[#747C87] from-90% to-[#25251D] text-[#FFFFFF] text-[24px] w-fit min-h-fit overflow-auto break-all font-medium shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
+                          />
                     ) : (
                       <>
-                        <p className='md:text-[16px] text-[#CDCFD3] text-lg font-light tracking-wide'> {updCpf} </p>
+                        <h3 className='text-[24px] w-50% text-[#292a2b] font-serif'>{AlunoModalInfo['nome']}</h3>
                         <button
-                          onClick={() => {
-                            setEditCpf(true);
-                            setEditSerie(false);
-                            setEditName(false); 
+                        onClick={() => { 
+                          setEditName(true);
 
-                            setUpdNome(updNome);
-                            setUpdSerie(updSerie);
-                            }}
-                          className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
-                            <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
+                          setUpdCpf(updCpf);
+                          setUpdSerie(updSerie);
+                          
+                          setEditCpf(false);
+                          setEditSerie(false);
+                          // setUpdSerie(Series.filter((serieObj) => serieObj['value'] === updSerie)[0]['label'])
+                        }}
+                        className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
+                          <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
                         </button>
                       </>
                     )
                   }
-                </div>
+                  </div>
+                  {/* Editable SERIE */}
+                  <div className='flex flex-row items-center space-x-6'>
+                    <div className='w-[6vw]'>
+                      <label className='text-[24px] font-medium text-black'>
+                        Série
+                      </label>
+                    </div>
+                    {
+                      editSerie ? (
+                        <select id='input-serie'
+                          className='bg-gradient-to-r from-[#747C87] from-90% to-[#25251D] text-[#FFFFFF] sm:rounded-lg rounded-none min-w-fit font-normal text-2xl shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
+                          value={updSerie} 
+                          onChange={(e) => { setUpdSerie(e.target.value); }}>
+                            {Series.slice(1).map((serieObj) => (
+                              <option className='text-lg font-normal' key={serieObj['label']} value={serieObj['value']}>
+                                {serieObj['label']}
+                              </option>
+                            ))}
+                        </select>
+                      ) : (
+                            AlunoModalInfo.serie !== '' ? (
+                              <>
+                                <h3 className='md:text-2xl text-[24px] font-serif text-[#292a2b]'>{Series.filter((serieObj) => serieObj['value'] === AlunoModalInfo.serie)[0]['label']}</h3>
+                                <button
+                                  onClick={() => {
+                                    setEditSerie(true);
 
-                <div>
-                  <p className='md:text-[16px] text-lg text-[#CDCFD3] font-light tracking-wide'> {updMatricula} </p>
-                </div>
+                                    setUpdNome(updNome);
+                                    setUpdCpf(updCpf);
 
+                                    setEditName(false);
+                                    setEditCpf(false); 
+
+                                    }}
+                                  className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
+                                    <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
+                                </button>
+                              </>
+                            ) : (
+                              <h4> </h4>
+                            )
+                      )
+                    }
+                  </div>
+                  {/* Editable CPF */}
+                  <div className='flex flex-row items-center space-x-6'>
+                    <div className='w-[6vw]'>
+                      <label className='text-[24px] font-medium text-black'>
+                        CPF
+                      </label>
+                    </div>
+                    {
+                      editCpf ? (
+                        <input id='input-cpf' 
+                          value={updCpf}
+                          type="text" 
+                          placeholder='Ex.: 000.000.000-01'
+                          autoFocus={true}
+                          onChange={(e) => setUpdCpf(e.target.value)}
+                          className='bg-gradient-to-r from-[#747C87] from-90% to-[#25251D] text-[#FFFFFF] tracking-wide text-[24px] text-lg bg-transparent min-w-fit min-h-fit overflow-auto break-all font-light shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
+                          />
+                      ) : (
+                        <>
+                          <p className='lg:text-[24px] text-[#292a2b] text-lg font-serif tracking-wide'> {updCpf} </p>
+                          <button
+                            className='w-[10%] h-[75%] justify-center items-center bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'
+                            onClick={() => {
+                              setEditCpf(true);
+                              setEditSerie(false);
+                              setEditName(false); 
+
+                              setUpdNome(updNome);
+                              setUpdSerie(updSerie);
+                              }}>
+                              <span className="icon-[gravity-ui--pencil-to-square] w-[65%] h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
+                          </button>
+                        </>
+                      )
+                    }
+                  </div>
+                  {/* NON-EDITABLE Matricula */}
+                  <div className='flex flex-row items-center space-x-6'>
+                    <div className='w-[6vw]'>
+                      <label className='text-[24px] font-medium text-black'>
+                        Matrícula
+                      </label>
+                    </div>
+                    <div>
+                      <p className='lg:text-[24px] text-lg text-[#292a2b] font-serif tracking-wide'> {updMatricula} </p>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
+            {/*BUTTONS*/}
             <div className='flex flex-row justify-between lg:w-full w-[95%] lg:h-[20%] h-[30%]'>
               <button className='lg:w-[49%] w-[28%] bg-[#25251D] font-sans text-base md:text-3xl tracking-wide text-[#FFFFFF] rounded-lg'
                 disabled={((isLoading) || (buttonClicked))}

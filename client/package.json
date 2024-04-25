@@ -44,6 +44,8 @@
     ]
   },
   "devDependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@iconify-json/carbon": "^1.1.31",
     "@iconify-json/gravity-ui": "^1.1.2",
     "@iconify/tailwind": "^0.1.4",
     "@types/react-modal": "^3.16.3",
