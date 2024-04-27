@@ -126,6 +126,24 @@ const Total = async (serie: string) => {
       console.log('Aluno Info Request Succesfully');
     }
   }
+  const AlunoMore = async (matricula: string) => {
+    try {
+      console.log(`Requesting ${matricula} info...`);
+      const response = await fetch(`/api/AlunoMore/${matricula}`);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const infoData = await response.json();
+      console.log(infoData);
+      return infoData;
+    }catch(e){
+      console.error('There has been a problem with your fetch operation:', e);
+      return;
+    } finally {
+      console.log('Aluno Info Request Succesfully');
+    }
+  }
 
 const AlunoInfo = {
     Total,
@@ -133,7 +151,8 @@ const AlunoInfo = {
     Alunos,
     Delete,
     Update,
-    Aluno
+    Aluno,
+    AlunoMore
 }
 
 export default AlunoInfo;

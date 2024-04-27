@@ -158,12 +158,13 @@ async function deleteAluno(req, res) {
 async function updateAluno(req, res) {
     try{
         const { matricula } = req.params;
-        const { nome, cpf, serie } = req.body;
+        const { nome, cpf, serie} = req.body;
 
-        const [aluno] = await pool.query(`
+        const [alunoInfo] = await pool.query(`
         UPDATE Alunos
         SET nome = ?, cpf = ?, serie = ?
         WHERE matricula = ?`, [nome, cpf, serie, matricula]);
+
 
         if(aluno.affectedRows === 1){
             return res.json({
@@ -203,13 +204,56 @@ async function findAluno(req, res) {
     }
 }
 
+async function findAlunoMore(req, res){
+    try{
+        const { matricula } = req.params;
+
+        const [alunoInfo] = await pool.query(`
+        SELECT matricula, cpf, nome, serie FROM Alunos
+        WHERE matricula = ?`, [matricula]);
+
+        if(alunoInfo.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Aluno não encontrado"
+            })
+        }
+
+        var [alunoIMG] = await pool.query(`
+        SELECT url FROM ProfileImages
+        WHERE matricula = ?`, [matricula]);
+
+        if(alunoIMG.length === 0){
+            alunoIMG = [{ url: '' }];
+        }
+
+        const aluno = {
+            matricula: alunoInfo[0].matricula,
+            cpf: alunoInfo[0].cpf,
+            nome: alunoInfo[0].nome,
+            serie: alunoInfo[0].serie,
+            img_url: alunoIMG[0].url
+        }
+
+        console.log(aluno);
+
+        return res.json(aluno);
+    }catch(error){
+        return res.status(400).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 const AlunoController = {
     createAluno,
     listAlunos,
     totalAlunos,
     deleteAluno,
     updateAluno,
-    findAluno
+    findAluno,
+    findAlunoMore
 }
 
 export default AlunoController;

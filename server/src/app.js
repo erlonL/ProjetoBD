@@ -17,6 +17,7 @@ app.get('/api/totalAlunos', AlunoController.totalAlunos);
 app.delete('/api/deleteAluno', AlunoController.deleteAluno);
 app.put('/api/updateAluno/:matricula', AlunoController.updateAluno);
 app.get('/api/Aluno/:matricula', AlunoController.findAluno);
+app.get('/api/AlunoMore/:matricula', AlunoController.findAlunoMore);
 
 // profile images
 app.get('/api/image/:matricula', PIMGController.getProfileImage);

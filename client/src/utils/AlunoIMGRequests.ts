@@ -3,7 +3,7 @@ const Image = async (matricula: string) => {
         console.log(`Requesting ${matricula} image...`);
         const response = await fetch(`/api/image/${matricula}`);
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error('Network response was not ok'); 
         }
         const data = await response.json() || { url: '' };
         console.log(data);
@@ -12,7 +12,7 @@ const Image = async (matricula: string) => {
         console.error('There has been a problem with your fetch operation:', e);
         return;
     } finally {
-        console.log('Aluno Image Request Succesfull');
+        console.log('Aluno Image Request Successful');
     }
   }
 
