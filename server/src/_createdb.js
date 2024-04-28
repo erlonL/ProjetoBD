@@ -32,15 +32,15 @@ async function populateDatabase(){
         console.log('Alunos Data inserted successfully')
 
         await pool.query(`INSERT INTO ProfileImages (matricula, url) VALUES
-        ('2024001', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024002', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024003', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024004', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024005', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024006', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024007', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024008', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
-        ('2024009', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202401', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202402', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202403', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202404', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202405', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202406', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202407', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202408', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
+        ('202409', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
         ('2024010', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
         ('2024011', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
         ('2024012', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png');`)

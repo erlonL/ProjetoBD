@@ -44,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@chakra-ui/react": "^2.8.2",
     "@iconify-json/carbon": "^1.1.31",
     "@iconify-json/gravity-ui": "^1.1.2",

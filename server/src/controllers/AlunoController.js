@@ -26,10 +26,24 @@ async function createAluno(req, res) {
         VALUES (?, ?, ?)`, 
         [cpf, nome, serie]);
 
-        if(aluno.affectedRows === 1){
-            return res.status(201).json(data);
+        if(aluno.affectedRows === 0){
+            return res.status(400).json({
+                error: true,
+                message: "Erro ao cadastrar aluno"
+            })
         }
 
+        const alunoMatricula = await pool.query(`
+        SELECT matricula FROM Alunos
+        WHERE cpf = ?`, [cpf]);
+        
+        return res.status(201).json({
+            matricula: alunoMatricula[0][0].matricula,
+            nome,
+            cpf,
+            serie
+        });
+        
     }catch(error){
         return res.status(400).json({
             error: true,
@@ -158,19 +172,18 @@ async function deleteAluno(req, res) {
 async function updateAluno(req, res) {
     try{
         const { matricula } = req.params;
-        const { nome, cpf, serie } = req.body;
+        const { nome, cpf, serie} = req.body;
 
-        const [aluno] = await pool.query(`
+        const [alunoInfo] = await pool.query(`
         UPDATE Alunos
         SET nome = ?, cpf = ?, serie = ?
         WHERE matricula = ?`, [nome, cpf, serie, matricula]);
-
-        if(aluno.affectedRows === 1){
+        
+        if(alunoInfo.affectedRows === 1){
             return res.json({
                 message: "Aluno atualizado com sucesso"
             })
         }
-
     }catch(error){
         return res.status(400).json({
             error: true,
@@ -203,13 +216,58 @@ async function findAluno(req, res) {
     }
 }
 
+async function findAlunoMore(req, res){
+    try{
+        const { matricula } = req.params;
+
+        const [alunoInfo] = await pool.query(`
+        SELECT matricula, cpf, nome, serie FROM Alunos
+        WHERE matricula = ?`, [matricula]);
+
+        if(alunoInfo.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Aluno não encontrado"
+            })
+        }
+
+        var [alunoIMG] = await pool.query(`
+        SELECT url FROM ProfileImages
+        WHERE matricula = ?`, [matricula]);
+
+        console.log(alunoIMG);
+
+        if(alunoIMG.length === 0){
+            alunoIMG = [{ url: '' }];
+        }
+
+        const aluno = {
+            matricula: alunoInfo[0].matricula,
+            cpf: alunoInfo[0].cpf,
+            nome: alunoInfo[0].nome,
+            serie: alunoInfo[0].serie,
+            img_url: alunoIMG[0].url
+        }
+
+        console.log(aluno);
+
+        return res.json(aluno);
+    }catch(error){
+        return res.status(400).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 const AlunoController = {
     createAluno,
     listAlunos,
     totalAlunos,
     deleteAluno,
     updateAluno,
-    findAluno
+    findAluno,
+    findAlunoMore
 }
 
 export default AlunoController;
