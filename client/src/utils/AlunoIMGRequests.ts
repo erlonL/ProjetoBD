@@ -5,7 +5,7 @@ const Image = async (matricula: string) => {
         if (!response.ok) {
             throw new Error('Network response was not ok'); 
         }
-        const data = await response.json() || { url: '' };
+        const data = await response.json();
         console.log(data);
         return data;
     }catch(e){
@@ -59,7 +59,7 @@ const Delete = async (matricula: string) => {
     }
 }
 
-const Update = async (matricula: string, imgURL: string) => {
+const Update = async (matricula: string, url: string) => {
     try {
         console.log(`Requesting image update for ${matricula}...`);
         const response = await fetch('/api/updateImage', {
@@ -67,7 +67,7 @@ const Update = async (matricula: string, imgURL: string) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ matricula, imgURL })
+        body: JSON.stringify({ matricula, url })
         });
         if (!response.ok) {
             throw new Error('Network response was not ok');

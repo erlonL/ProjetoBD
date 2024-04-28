@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import Series from "../../utils/Series";
 
 import AlunoInfo from "../../utils/AlunoInfoRequests";
+import AlunoIMG from "../../utils/AlunoIMGRequests";
 import AlunoInfoModal from "./AlunoInfoModal";
-import Modal from "../modal";
+import AlunoInfoObject from "../../utils/AlunoInfoInterface";
+import AlunoAddModal from "./AlunoAddModal";
 
 const AlunosTable: React.FC = () => {
     const [Alunos, setAlunos] = useState([{}]);
@@ -14,26 +16,44 @@ const AlunosTable: React.FC = () => {
     const DEFAULTPAGE = 1;
     const [page, setPage] = useState(DEFAULTPAGE);
     const empty = ((Alunos === null) || (Alunos.length === 0) || (Object.keys(Alunos[0]).length === 0)) ? true : false;
+
     const [renderOption, setRenderOption] = useState('default');
     const [SaveOption, setSaveOption] = useState(false);
     const [ShowConfirm, setShowConfirm] = useState(false);
+    
     const [SelectedMatricula, setSelectedMatricula] = useState('');
     const [totalAlunos, setTotalAlunos] = useState(0);
     const nextEnabled = (totalAlunos - ((page - 1) * 12)) <= 12;
 
-    const [modalMatricula, setModalMatricula] = useState('');
+    const [addModalIsOpen, setAddModalIsOpen] = useState(false);
 
+    const [alunoModalInfo, setAlunoModalInfo] = useState<AlunoInfoObject>({
+      nome: '',
+      cpf: '',
+      serie: '',
+      matricula: '',
+      img_url: ''
+    });
 
     const handleFilterSeriesChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setFilterSelectedSeries(event.target.value);
         setPage(1);
     };
-    const OpenModal = () => {
+    const OpenInfoModal = () => {
         setInfoModalIsOpen(true);
     };
-    const CloseModal = (e: any) => {
+    
+    const CloseInfoModal = (e: any) => {
         e.stopPropagation();
         setInfoModalIsOpen(false);
+    };
+
+    const OpenAddModal = () => {
+        setAddModalIsOpen(true);
+    };
+    const CloseAddModal = (e: any) => {
+        e.stopPropagation();
+        setAddModalIsOpen(false);
     };
 
     const handleRequest = async () => {
@@ -45,12 +65,9 @@ const AlunosTable: React.FC = () => {
         setTotalAlunos(data as number);
     }
     const handleDeleteAlunoRequest = async (matricula: string) => {
-        const data = await AlunoInfo.Delete(matricula);
-        console.log(data);
-    }
-    const handleAlunoInfoRequest = async (matricula: string) => {
-        const data = await AlunoInfo.Aluno(matricula);
-        console.log(data);
+        const info_data = await AlunoInfo.Delete(matricula);
+        const img_data = await AlunoIMG.Delete(matricula);
+        console.log(info_data, img_data);
     }
     const clearForms = () => {
         console.log('Clearing forms...');
@@ -62,17 +79,29 @@ const AlunosTable: React.FC = () => {
         setPage(page - 1);
     }
 
+    const handleAlunoMoreRequest = async (matricula: string) => {
+      try {
+        const response = await AlunoInfo.AlunoMore(matricula);
+        setAlunoModalInfo(response);
+      }catch(e){
+        console.error('There has been a problem with your fetch operation:', e);
+        return;
+      } finally {
+        console.log('Aluno Info Request Succesfully');
+      }
+    };
+
 
     
     useEffect(() => {
-            if(SaveOption){
-                setRenderOption('save');
-            } else if(ShowConfirm){
-                setRenderOption('delete');
-            } else {
-                setRenderOption('default');
-            }
-        }, [SaveOption, ShowConfirm]);
+      if(SaveOption){
+          setRenderOption('save');
+      } else if(ShowConfirm){
+          setRenderOption('delete');
+      } else {
+          setRenderOption('default');
+      }
+    }, [SaveOption, ShowConfirm]);
 
     useEffect(() => {
         handleRequest();
@@ -94,11 +123,28 @@ const AlunosTable: React.FC = () => {
         }
       }
 
+      useEffect(() => {
+        handleTotalAlunosRequest(filterSelectedSeries);
+      }, [filterSelectedSeries]);
+
+    const updateTable = () => {
+      handleRequest();
+      setShowConfirm(false);
+      setSaveOption(false);
+      clearForms();
+      handleTotalAlunosRequest(filterSelectedSeries);
+    }
+
     return (
       <>
       {
         infoModalIsOpen && (
-          <AlunoInfoModal matricula={modalMatricula} isOpen={infoModalIsOpen} CloseModal={CloseModal}/>
+          <AlunoInfoModal isOpen={infoModalIsOpen} CloseModal={CloseInfoModal} AlunoInfoObject={alunoModalInfo} updateTable={updateTable}/>
+        )
+      }
+      {
+        addModalIsOpen && (
+          <AlunoAddModal isOpen={addModalIsOpen} CloseModal={CloseAddModal} updateTable={updateTable}/>
         )
       }
 
@@ -127,7 +173,7 @@ const AlunosTable: React.FC = () => {
                 </select>
               </div>
               {/* ADD ALUNO BUTTON */}
-              <button className='bg-[#25251D] text-[#FFFFFF] self-end mb-2 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenModal}>
+              <button className='bg-[#25251D] text-[#FFFFFF] self-end mb-2 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenAddModal}>
                 <p className='font-bold font-sans text-[#FFFFFF]'>ADICIONAR ALUNO</p>
               </button>
             </div>
@@ -150,7 +196,6 @@ const AlunosTable: React.FC = () => {
                     </tr>
                   ) : 
                   (
-                    console.log('ALUNOS:', Alunos),
                     Alunos.map((aluno: any) => (
                       <tr className='even:bg-[#CACACA] odd:bg-[#D6D6D6]' key={aluno.matricula}>
                         <td className='text-base border text-center'>{aluno.nome}</td>
@@ -188,8 +233,9 @@ const AlunosTable: React.FC = () => {
                               <div className='flex flex-row mx-4 justify-center items-center'>
                                 {/*View aluno info*/}
                                 <button className='bg-[#14181d] group transition duration-150 w-[4vw] h-[4vh] lg:w-[2vw] p-1 mx-1 my-2 rounded-lg' onClick={() => {
-                                  setModalMatricula(aluno.matricula);
-                                  OpenModal();
+                                  handleAlunoMoreRequest(aluno.matricula).then(()=>{
+                                    OpenInfoModal();
+                                  })
                                   console.log(`Visualizando aluno... ${aluno.matricula}`);
                                 }}
                                 >
@@ -230,11 +276,7 @@ const AlunosTable: React.FC = () => {
               <div className='ml-auto flex flex-row items-center justify-evenly space-x-auto w-[16vw] h-[8vh]'>
                 <button className='bg-[#25251D] text-[#FFFFFF] p-1 justify-center items-center rounded-lg w-[30%] lg:w-[18%] h-[45%] lg:h-[70%]'
                 onClick={() => {
-                  setAlunos([{}]);
-                  handleRequest();
-                  setShowConfirm(false);
-                  setSaveOption(false);
-                  clearForms();
+                  updateTable();
                   console.log('ATUALIZANDO TABELA...')
                 }}>
                   <img className='w-full h-full filter invert' src={require('../../img/1atualizar.png')} alt="Atualizar"/>

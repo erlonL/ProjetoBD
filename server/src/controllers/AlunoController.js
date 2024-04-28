@@ -26,10 +26,24 @@ async function createAluno(req, res) {
         VALUES (?, ?, ?)`, 
         [cpf, nome, serie]);
 
-        if(aluno.affectedRows === 1){
-            return res.status(201).json(data);
+        if(aluno.affectedRows === 0){
+            return res.status(400).json({
+                error: true,
+                message: "Erro ao cadastrar aluno"
+            })
         }
 
+        const alunoMatricula = await pool.query(`
+        SELECT matricula FROM Alunos
+        WHERE cpf = ?`, [cpf]);
+        
+        return res.status(201).json({
+            matricula: alunoMatricula[0][0].matricula,
+            nome,
+            cpf,
+            serie
+        });
+        
     }catch(error){
         return res.status(400).json({
             error: true,
@@ -164,14 +178,12 @@ async function updateAluno(req, res) {
         UPDATE Alunos
         SET nome = ?, cpf = ?, serie = ?
         WHERE matricula = ?`, [nome, cpf, serie, matricula]);
-
-
-        if(aluno.affectedRows === 1){
+        
+        if(alunoInfo.affectedRows === 1){
             return res.json({
                 message: "Aluno atualizado com sucesso"
             })
         }
-
     }catch(error){
         return res.status(400).json({
             error: true,
@@ -222,6 +234,8 @@ async function findAlunoMore(req, res){
         var [alunoIMG] = await pool.query(`
         SELECT url FROM ProfileImages
         WHERE matricula = ?`, [matricula]);
+
+        console.log(alunoIMG);
 
         if(alunoIMG.length === 0){
             alunoIMG = [{ url: '' }];

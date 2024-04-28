@@ -5,18 +5,17 @@ const Total = async (serie: string) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const data = Number(await response.json());
-      console.log(data);
+      data = Number(await response.json());
       return data;
     }catch(e){
       console.error('There has been a problem with totalAlunos Request:', e);
       return;
     } finally {
-      console.log(`total alunos for serie ${serie} is ${data}`);
+      console.log(`Total de alunos na série ${serie}: ${data}`);
     }
   }
 
-  const Add = async (data: any) => {
+  const Create = async (data: any) => {
     try {
       const response = await fetch('/api/createAluno', {
         method: 'POST',
@@ -25,9 +24,7 @@ const Total = async (serie: string) => {
         },
         body: JSON.stringify(data)
       });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      
       const responseJSON = await response.json();
       console.log(responseJSON);
       return responseJSON;
@@ -41,7 +38,7 @@ const Total = async (serie: string) => {
 
   const Alunos = async (page: Number, serie: string) => {
     try {
-      console.log(`Requesting page ${page}... serie ${serie}`);
+      //console.log(`Requesting page ${page}... serie ${serie}`);
       const response = await fetch(`/api/listAlunos?page=${page}&serie=${serie}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -49,16 +46,16 @@ const Total = async (serie: string) => {
       const data = await response.json();
       if(data.length === 0){
         console.log('No more data to fetch');
-        return [];
+        return [{}];
       }
-      console.log(data);
+      //console.log(data);
       return data;
     }catch(e){
       console.error('There has been a problem with your fetch operation:', e);
       return;
     } finally {
       // setIsLoading(false);
-      console.log(`Request for series ${serie} page ${page} completed`);
+      //console.log(`Request for series ${serie} page ${page} completed`);
     }
   };
 
@@ -93,12 +90,8 @@ const Total = async (serie: string) => {
         },
         body: JSON.stringify(data)
       });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
       const responseJSON = await response.json();
       console.log(responseJSON);
-      return responseJSON;
     }catch(e){
       console.error('There has been a problem with your fetch operation:', e);
       return;
@@ -110,7 +103,7 @@ const Total = async (serie: string) => {
 
   const Aluno = async (matricula: string) => {
     try {
-      console.log(`Requesting ${matricula} info...`);
+      //console.log(`Requesting ${matricula} info...`);
       const response = await fetch(`/api/Aluno/${matricula}`);
 
       if (!response.ok) {
@@ -127,27 +120,26 @@ const Total = async (serie: string) => {
     }
   }
   const AlunoMore = async (matricula: string) => {
+    var data = null;
     try {
-      console.log(`Requesting ${matricula} info...`);
       const response = await fetch(`/api/AlunoMore/${matricula}`);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const infoData = await response.json();
-      console.log(infoData);
-      return infoData;
+      data = await response.json();
     }catch(e){
       console.error('There has been a problem with your fetch operation:', e);
-      return;
+      return null;
     } finally {
       console.log('Aluno Info Request Succesfully');
+      return data;
     }
   }
 
 const AlunoInfo = {
     Total,
-    Add,
+    Create,
     Alunos,
     Delete,
     Update,
