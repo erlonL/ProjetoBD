@@ -1,6 +1,6 @@
 import Modal from 'react-modal'
 
-const modalStyles: Modal.Styles = {
+const DisciplinaModalStyles: Modal.Styles = {
     overlay: {
       backgroundColor: 'rgba(0, 0, 0, 0)',
       zIndex: '9999',
@@ -15,6 +15,8 @@ const modalStyles: Modal.Styles = {
     // transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     // transition-duration: 150ms;
     content: {
+      width: '75%',
+      height: '75%',
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
@@ -33,4 +35,4 @@ const modalStyles: Modal.Styles = {
     }
   };
 
-export default modalStyles;
+export default DisciplinaModalStyles;

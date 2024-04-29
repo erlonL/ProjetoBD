@@ -164,13 +164,85 @@ async function totalDisciplinas(req, res) {
     }
 }
 
+async function DisciplinaMore(req, res) {
+    try{
+        const { codigo_disci } = req.params;
+
+        const [disciplina] = await pool.query(`
+        SELECT nome_disci, codigo_disci, codigo_prof_frn FROM Disciplinas
+        WHERE codigo_disci = ?`, [codigo_disci]);
+
+        if(disciplina.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Disciplina não encontrada"
+            })
+        }
+
+        const [professor] = await pool.query(`
+        SELECT nome_prof FROM Professores
+        WHERE codigo_prof = ?`, [disciplina[0].codigo_prof_frn]);
+
+        const Disciplina = {
+            nome_disci: disciplina[0].nome_disci,
+            codigo_disci: disciplina[0].codigo_disci,
+            professor: professor[0].nome_prof
+        }
+
+        const [matriculas] = await pool.query(`
+        SELECT matricula_aluno_frn FROM Matriculado
+        WHERE codigo_disci_frn = ?`, [codigo_disci]);
+
+        let alunos = [{}];
+        let alunos_pimg = [{}];
+
+        for(let i = 0; i < matriculas.length; i++){
+            const [aluno] = await pool.query(`
+            SELECT nome_aluno, matricula_aluno, turma FROM Alunos
+            WHERE matricula_aluno = ?`, [matriculas[i].matricula_aluno_frn]);
+
+            alunos.push(aluno[0]);
+        }
+        alunos.shift();
+
+        for(let i = 0; i < matriculas.length; i++){
+            const [aluno_img] = await pool.query(`
+            SELECT url FROM AlunosProfileImages
+            WHERE matricula_aluno_frn = ?`, [matriculas[i].matricula_aluno_frn]);
+
+            alunos_pimg.push(aluno_img[0]);
+        }
+        alunos_pimg.shift();
+
+        const Alunos = alunos.map((aluno, index) => {
+            return {
+                ...aluno,
+                ...alunos_pimg[index]
+            }
+        }
+        );
+
+        return res.json({
+            Disciplina,
+            Alunos
+        });
+
+    } catch(error) {
+        return res.status(400).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 const DisciplinaController = {
     createDisciplina,
     listDisciplinas,
     updateDisciplina,
     deleteDisciplina,
     findDisciplina,
-    totalDisciplinas
+    totalDisciplinas,
+    DisciplinaMore
 }
 
 export default DisciplinaController;

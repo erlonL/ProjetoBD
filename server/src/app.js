@@ -38,6 +38,7 @@ app.delete('/api/professor', ProfessorController.deleteProfessor);
 app.put('/api/professor', ProfessorController.updateProfessor);
 app.get('/api/professores/total', ProfessorController.totalProfessores);
 app.get('/api/professor/:codigo', ProfessorController.findProfessor);
+app.get('/api/professorName/:codigo', ProfessorController.ProfessorName);
 
 // professores profile images
 app.get('/api/image/professor/:codigo_prof', ProfessoresPIMGController.getProfileImage);
@@ -52,12 +53,14 @@ app.delete('/api/disciplina', DisciplinaController.deleteDisciplina);
 app.put('/api/disciplina', DisciplinaController.updateDisciplina);
 app.get('/api/disciplina/:codigo_disci', DisciplinaController.findDisciplina);
 app.get('/api/disciplinas/total', DisciplinaController.totalDisciplinas);
+app.get('/api/disciplinaMore/:codigo_disci', DisciplinaController.DisciplinaMore);
 
 // matriculado
-app.get('/api/matriculas/:matricula_aluno', MatriculadoController.findMatriculas);
+app.get('/api/matriculas/aluno/:matricula_aluno', MatriculadoController.findMatriculas);
 app.post('/api/matricula', MatriculadoController.createMatricula);
 app.delete('/api/matricula', MatriculadoController.deleteMatricula);
 app.get('/api/matriculas', MatriculadoController.listMatriculas);
+app.get('/api/matriculas/disciplina/:codigo_disci', MatriculadoController.findAlunosMatriculados);
 
 // disabled
 // app.post('/api/createAlunoMany', AlunoController.createAlunoMany);

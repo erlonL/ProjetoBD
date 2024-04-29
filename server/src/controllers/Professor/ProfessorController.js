@@ -180,13 +180,38 @@ async function totalProfessores(req, res) {
     }
 }
 
+async function ProfessorName(req, res) {
+    try{
+        const { codigo } = req.params;
+
+        const [professor] = await pool.query(`
+        SELECT nome_prof FROM Professores
+        WHERE codigo_prof = ?`, [codigo]);
+
+        if(professor.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Professor não encontrado"
+            })
+        }
+
+        return res.status(200).json(professor[0]);
+    } catch(error){
+        return res.status(400).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 const ProfessorController = {
     createProfessor,
     listProfessores,
     updateProfessor,
     deleteProfessor,
     findProfessor,
-    totalProfessores
+    totalProfessores,
+    ProfessorName
 }
 
 export default ProfessorController;

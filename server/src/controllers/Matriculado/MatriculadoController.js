@@ -97,11 +97,29 @@ async function findMatriculas(req, res) {
     }
 }
 
+async function findAlunosMatriculados(req, res) {
+    try{
+        const { codigo_disci } = req.params;
+
+        const [matriculas] = await pool.query(`
+        SELECT matricula_aluno_frn FROM Matriculado
+        WHERE codigo_disci_frn = ?`, [codigo_disci]);
+
+        return res.status(200).json(matriculas);
+    } catch(error){
+        return res.status(400).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 const MatriculadoController = {
     createMatricula,
     listMatriculas,
     deleteMatricula,
-    findMatriculas
+    findMatriculas,
+    findAlunosMatriculados
 }
 
 export default MatriculadoController;

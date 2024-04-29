@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import Modal from "react-modal";
-import modalStyles from "../../utils/ModalStyles";
+import modalStyles from "../../utils/Aluno/AlunoModalStyles";
 import Turmas from "../../utils/Aluno/Turmas";
 
 import AlunoInfo from "../../utils/Aluno/AlunoInfoRequests";

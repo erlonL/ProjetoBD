@@ -121,20 +121,18 @@ const Total = async (turma: string) => {
     }
   }
   const AlunoMore = async (matricula: string) => {
-    var data = null;
     try {
       const response = await fetch(`/api/alunoMore/${matricula}`);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      data = await response.json();
+      const data = await response.json();
+      console.log(data);
+      return data;
     }catch(e){
       console.error('There has been a problem with your fetch operation:', e);
-      return null;
-    } finally {
-      console.log('Aluno Info Request Succesfully');
-      return data;
+      return;
     }
   }
 
