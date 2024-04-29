@@ -1,10 +1,8 @@
-import AlunoInfoObject from '../Aluno/AlunoInfoInterface';
-
 interface DisciplinaInfoObject {
     nome: string;
     codigo: string;
-    professor: string;
-    alunos: AlunoInfoObject[];
+    professor: any;
+    alunos: any [];
 }
 
 export default DisciplinaInfoObject;

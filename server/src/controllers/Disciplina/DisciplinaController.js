@@ -179,19 +179,36 @@ async function DisciplinaMore(req, res) {
             })
         }
 
-        const [professor] = await pool.query(`
-        SELECT nome_prof FROM Professores
+        const [professorInfo] = await pool.query(`
+        SELECT nome_prof, email_prof, codigo_prof FROM Professores
         WHERE codigo_prof = ?`, [disciplina[0].codigo_prof_frn]);
+
+        const [professorIMG] = await pool.query(`
+        SELECT url FROM ProfessoresProfileImages
+        WHERE codigo_prof_frn = ?`, [disciplina[0].codigo_prof_frn]);
+
+        const Professor = {
+            ...professorInfo[0],
+            ...professorIMG[0]
+        };
+        
+        console.log(Professor);
 
         const Disciplina = {
             nome_disci: disciplina[0].nome_disci,
-            codigo_disci: disciplina[0].codigo_disci,
-            professor: professor[0].nome_prof
+            codigo_disci: disciplina[0].codigo_disci
         }
 
         const [matriculas] = await pool.query(`
         SELECT matricula_aluno_frn FROM Matriculado
         WHERE codigo_disci_frn = ?`, [codigo_disci]);
+
+        if(matriculas.length === 0){
+            return res.json({
+                Disciplina,
+                Alunos: [{}]
+            });
+        }
 
         let alunos = [{}];
         let alunos_pimg = [{}];
@@ -224,6 +241,7 @@ async function DisciplinaMore(req, res) {
 
         return res.json({
             Disciplina,
+            Professor,
             Alunos
         });
 

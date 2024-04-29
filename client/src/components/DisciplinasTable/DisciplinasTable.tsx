@@ -37,13 +37,13 @@ const DisciplinasTable: React.FC = () => {
     const [selectedDisciplina, setSelectedDisciplina] = useState({
         nome: '',
         codigo: '',
-        professor: ''
+        professor: null
     });
 
     const [disciplinaModalInfo, setDisciplinaModalInfo] = useState<DisciplinaInfoObject>({
         nome: '',
         codigo: '',
-        professor: '',
+        professor: null,
         alunos: []
     });
 
@@ -164,7 +164,7 @@ const DisciplinasTable: React.FC = () => {
       setDisciplinaModalInfo({
         nome: data.Disciplina.nome_disci,
         codigo: data.Disciplina.codigo_disci,
-        professor: data.Disciplina.professor,
+        professor: data.Professor,
         alunos: data.Alunos
       });
       console.log(disciplinaModalInfo);
@@ -234,11 +234,14 @@ const DisciplinasTable: React.FC = () => {
           <div className='bg-[#D4D4D4] justify-center items-center w-full min-h-fit flex flex-col' id='AlunosTable'>
 
             {/* TABLE HEADER */}
+            {/*use it for auxiliary buttons or info for the table*/}
             <div className='flex flex-row justify-between items-center w-[95%]'>
               {/* ADD ALUNO BUTTON */}
-              <button className='bg-[#25251D] text-[#FFFFFF] self-end mb-2 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenAddModal}>
-                <p className='font-bold font-sans text-[#FFFFFF]'>ADICIONAR DISCIPLINA</p>
-              </button>
+              {/*DISABLED
+                <button className='bg-[#25251D] text-[#FFFFFF] self-end mb-2 rounded-lg w-[16vw] h-[8vh] ' onClick={OpenAddModal}>
+                  <p className='font-bold font-sans text-[#FFFFFF]'>ADICIONAR DISCIPLINA</p>
+                </button>
+              */}
             </div>
             
             {/* TABLE CONTENT */}
