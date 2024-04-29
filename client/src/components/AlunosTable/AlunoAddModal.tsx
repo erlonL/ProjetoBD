@@ -2,18 +2,10 @@ import React, { useState, useEffect } from "react";
 
 import Modal from "react-modal";
 import modalStyles from "../../utils/ModalStyles";
-import Series from "../../utils/Series";
+import Turmas from "../../utils/Aluno/Turmas";
 
-import AlunoInfo from "../../utils/AlunoInfoRequests";
-import AlunoIMG from "../../utils/AlunoIMGRequests";
-
-interface AlunoInfo {
-    nome: string;
-    cpf: string;
-    serie: string;
-    matricula: string;
-    img_url: string;
-}
+import AlunoInfo from "../../utils/Aluno/AlunoInfoRequests";
+import AlunoIMG from "../../utils/Aluno/AlunoIMGRequests";
 
 interface AlunoAddModalProps {
     isOpen: boolean;
@@ -24,17 +16,17 @@ interface AlunoAddModalProps {
 const AlunoAddModal: React.FC<AlunoAddModalProps> = ({ isOpen, CloseModal, updateTable }) => {
 
   const [addModalIsOpen, setAddModalIsOpen] = useState(isOpen);
-  // const [addAlunoInfo, setAddAlunoInfo] = useState({ nome: '', cpf: '', serie: Series[1]['value'], img_url: '' });
+  // const [addAlunoInfo, setAddAlunoInfo] = useState({ nome: '', cpf: '', turma: Turmas[1]['value'], img_url: '' });
 
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
-  const [serie, setSerie] = useState(Series[1]['value']);
+  const [turma, setTurma] = useState(Turmas[1]['value']);
   const [img_url, setImgUrl] = useState('');
 
   const clearForms = () => {
     setNome('');
     setCpf('');
-    setSerie('');
+    setTurma('');
     setImgUrl('');
   }
 
@@ -42,7 +34,7 @@ const AlunoAddModal: React.FC<AlunoAddModalProps> = ({ isOpen, CloseModal, updat
     const infodata = {
       nome: data.nome,
       cpf: data.cpf,
-      serie: data.serie,
+      turma: data.turma,
     }
 
     const Aluno = await AlunoInfo.Create(infodata);
@@ -97,15 +89,15 @@ const AlunoAddModal: React.FC<AlunoAddModalProps> = ({ isOpen, CloseModal, updat
               <label className='text-xl font-serif'>
                 Série
               </label>
-              <select id='input-serie'
+              <select id='input-turma'
                 className='bg-[#25251D] text-[#FFFFFF] p-2 m-2 rounded-lg w-[20vw] font-serif text-lg ' 
-                value={serie} 
+                value={turma} 
                 onChange={(e) => {
-                setSerie(e.target.value);
+                setTurma(e.target.value);
                 }}>
-                  {Series.slice(1).map((serieObj) => (
-                    <option className='text-lg font-serif text-black' key={serieObj['label']} value={serieObj['value']}>
-                      {serieObj['label']}
+                  {Turmas.slice(1).map((turmaObj) => (
+                    <option className='text-lg font-serif text-black' key={turmaObj['label']} value={turmaObj['value']}>
+                      {turmaObj['label']}
                     </option>
                   ))}
               </select>
@@ -129,7 +121,7 @@ const AlunoAddModal: React.FC<AlunoAddModalProps> = ({ isOpen, CloseModal, updat
         onClick={(e) => {
           // e.preventDefault();
           console.log('Saving new aluno...');
-          const data = { nome, cpf, serie };
+          const data = { nome, cpf, turma };
 
           handleAddAlunoRequest(data).then(
             () => {

@@ -1,7 +1,7 @@
 const Image = async (matricula: string) => {
     try {
         console.log(`Requesting ${matricula} image...`);
-        const response = await fetch(`/api/image/${matricula}`);
+        const response = await fetch(`/api/image/aluno/${matricula}`);
         if (!response.ok) {
             throw new Error('Network response was not ok'); 
         }
@@ -19,7 +19,7 @@ const Image = async (matricula: string) => {
 const Create = async (matricula: string, imgURL: string) => {
     try {
         console.log(`Requesting image creation for ${matricula}...`);
-        const response = await fetch('/api/createImage', {
+        const response = await fetch('/api/image/aluno', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ const Create = async (matricula: string, imgURL: string) => {
 const Delete = async (matricula: string) => {
     try {
         console.log(`Requesting image deletion for ${matricula}...`);
-        const response = await fetch(`/api/deleteImage?matricula=${matricula}`, {
+        const response = await fetch(`/api/image/aluno?matricula=${matricula}`, {
         method: 'DELETE'
         });
         if (!response.ok) {
@@ -62,7 +62,7 @@ const Delete = async (matricula: string) => {
 const Update = async (matricula: string, url: string) => {
     try {
         console.log(`Requesting image update for ${matricula}...`);
-        const response = await fetch('/api/updateImage', {
+        const response = await fetch('/api/image/aluno', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

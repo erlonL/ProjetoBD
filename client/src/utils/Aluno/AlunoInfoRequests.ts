@@ -1,7 +1,7 @@
-const Total = async (serie: string) => {
+const Total = async (turma: string) => {
     var data = null;
     try {
-      const response = await fetch(`/api/totalAlunos?serie=${serie}`);
+      const response = await fetch(`/api/alunos/total?turma=${turma}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -11,13 +11,13 @@ const Total = async (serie: string) => {
       console.error('There has been a problem with totalAlunos Request:', e);
       return;
     } finally {
-      console.log(`Total de alunos na série ${serie}: ${data}`);
+      console.log(`Total de alunos na série ${turma}: ${data}`);
     }
   }
 
   const Create = async (data: any) => {
     try {
-      const response = await fetch('/api/createAluno', {
+      const response = await fetch('/api/aluno', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -36,14 +36,15 @@ const Total = async (serie: string) => {
     }
   };
 
-  const Alunos = async (page: Number, serie: string) => {
+  const Alunos = async (page: Number, turma: string) => {
     try {
-      //console.log(`Requesting page ${page}... serie ${serie}`);
-      const response = await fetch(`/api/listAlunos?page=${page}&serie=${serie}`);
+      //console.log(`Requesting page ${page}... turma ${turma}`);
+      const response = await fetch(`/api/alunos?page=${page}&turma=${turma}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
+      console.log(data);
       if(data.length === 0){
         console.log('No more data to fetch');
         return [{}];
@@ -55,14 +56,14 @@ const Total = async (serie: string) => {
       return;
     } finally {
       // setIsLoading(false);
-      //console.log(`Request for series ${serie} page ${page} completed`);
+      //console.log(`Request for turmas ${turma} page ${page} completed`);
     }
   };
 
   const Delete = async (matricula: string) => {
     try {
       console.log('ENVIANDO REQUISIÇÃO DE DELEÇÃO...')
-      const response = await fetch(`/api/deleteAluno?matricula=${matricula}`, {
+      const response = await fetch(`/api/aluno?matricula=${matricula}`, {
         method: 'DELETE'
       });
       if (!response.ok) {
@@ -83,7 +84,7 @@ const Total = async (serie: string) => {
   const Update = async (matricula: string, data: any) => {
     try {
       console.log('ENVIANDO REQUISIÇÃO DE ATUALIZAÇÃO...')
-      const response = await fetch(`/api/updateAluno/${matricula}`, {
+      const response = await fetch(`/api/aluno?matricula=${matricula}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -104,7 +105,7 @@ const Total = async (serie: string) => {
   const Aluno = async (matricula: string) => {
     try {
       //console.log(`Requesting ${matricula} info...`);
-      const response = await fetch(`/api/Aluno/${matricula}`);
+      const response = await fetch(`/api/aluno/${matricula}`);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -122,7 +123,7 @@ const Total = async (serie: string) => {
   const AlunoMore = async (matricula: string) => {
     var data = null;
     try {
-      const response = await fetch(`/api/AlunoMore/${matricula}`);
+      const response = await fetch(`/api/alunoMore/${matricula}`);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');

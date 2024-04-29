@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 
-import Series from "../../utils/Series";
+import Turmas from "../../utils/Aluno/Turmas";
 
-import AlunoInfo from "../../utils/AlunoInfoRequests";
-import AlunoIMG from "../../utils/AlunoIMGRequests";
+import AlunoInfo from "../../utils/Aluno/AlunoInfoRequests";
+import AlunoIMG from "../../utils/Aluno/AlunoIMGRequests";
 import AlunoInfoModal from "./AlunoInfoModal";
-import AlunoInfoObject from "../../utils/AlunoInfoInterface";
+import AlunoInfoObject from "../../utils/Aluno/AlunoInfoInterface";
 import AlunoAddModal from "./AlunoAddModal";
 
 const AlunosTable: React.FC = () => {
     const [Alunos, setAlunos] = useState([{}]);
 
-    const [filterSelectedSeries, setFilterSelectedSeries] = useState(Series[0]['value']);
+    const [filterSelectedTurmas, setFilterSelectedTurmas] = useState(Turmas[0]['value']);
     const [infoModalIsOpen, setInfoModalIsOpen] = useState(false);
     const DEFAULTPAGE = 1;
     const [page, setPage] = useState(DEFAULTPAGE);
@@ -30,13 +30,13 @@ const AlunosTable: React.FC = () => {
     const [alunoModalInfo, setAlunoModalInfo] = useState<AlunoInfoObject>({
       nome: '',
       cpf: '',
-      serie: '',
+      turma: '',
       matricula: '',
       img_url: ''
     });
 
-    const handleFilterSeriesChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setFilterSelectedSeries(event.target.value);
+    const handleFilterTurmasChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setFilterSelectedTurmas(event.target.value);
         setPage(1);
     };
     const OpenInfoModal = () => {
@@ -57,17 +57,18 @@ const AlunosTable: React.FC = () => {
     };
 
     const handleRequest = async () => {
-        const data = await AlunoInfo.Alunos(page, filterSelectedSeries);
+        const data = await AlunoInfo.Alunos(page, filterSelectedTurmas);
         setAlunos(data);
     }
-    const handleTotalAlunosRequest = async (serie: string) => {
-        const data = await AlunoInfo.Total(serie);
+    const handleTotalAlunosRequest = async (turma: string) => {
+        const data = await AlunoInfo.Total(turma);
         setTotalAlunos(data as number);
     }
     const handleDeleteAlunoRequest = async (matricula: string) => {
         const info_data = await AlunoInfo.Delete(matricula);
-        const img_data = await AlunoIMG.Delete(matricula);
-        console.log(info_data, img_data);
+        // handled by DBMS (SGBD) on delete cascade
+        // const img_data = await AlunoIMG.Delete(matricula);
+        console.log(info_data);
     }
     const clearForms = () => {
         console.log('Clearing forms...');
@@ -107,7 +108,7 @@ const AlunosTable: React.FC = () => {
         handleRequest();
         setSaveOption(false);
         setShowConfirm(false);
-    }, [page, filterSelectedSeries]);
+    }, [page, filterSelectedTurmas]);
 
     const Options: React.FC<{ renderOption: string, aluno: any; }> = ({ renderOption, aluno }) => {
         switch(renderOption)
@@ -124,15 +125,15 @@ const AlunosTable: React.FC = () => {
       }
 
       useEffect(() => {
-        handleTotalAlunosRequest(filterSelectedSeries);
-      }, [filterSelectedSeries]);
+        handleTotalAlunosRequest(filterSelectedTurmas);
+      }, [filterSelectedTurmas]);
 
     const updateTable = () => {
       handleRequest();
       setShowConfirm(false);
       setSaveOption(false);
       clearForms();
-      handleTotalAlunosRequest(filterSelectedSeries);
+      handleTotalAlunosRequest(filterSelectedTurmas);
     }
 
     return (
@@ -162,12 +163,12 @@ const AlunosTable: React.FC = () => {
             <div className='flex flex-row justify-between items-center w-[95%]'>
               {/* TABLE FILTER */}
               <div id='select-label' className='flex flex-col items-start justify-center'>
-                <label htmlFor="select" className='font-bold font-sans text-xl'>FILTRO POR SÉRIE</label>
+                <label htmlFor="select" className='font-bold font-sans text-xl'>FILTRO POR TURMA</label>
                 <select className='bg-[#25251D] text-[#FFFFFF] p-4 mb-2 rounded-lg w-[16vw] h-[8vh] self-start' 
-                value={filterSelectedSeries} onChange={handleFilterSeriesChange}>
-                  {Series.map((serieObj) => (
-                    <option className='pl-2' key={serieObj['label']} value={serieObj['value']}>
-                      {serieObj['label']}
+                value={filterSelectedTurmas} onChange={handleFilterTurmasChange}>
+                  {Turmas.map((turmaObj) => (
+                    <option className='pl-2' key={turmaObj['label']} value={turmaObj['value']}>
+                      {turmaObj['label']}
                     </option>
                   ))}
                 </select>
@@ -185,7 +186,7 @@ const AlunosTable: React.FC = () => {
                   <tr className='bg-[#AEAEAE]'>
                     <th className='text-3xl text-center'>Nome</th>
                     <th className='text-3xl text-center'>Matrícula</th>
-                    <th className='text-3xl text-center'>Série</th>
+                    <th className='text-3xl text-center'>Turma</th>
                     <th className='text-xl text-center'>OPÇÕES</th>
                   </tr>
                 </thead>
@@ -201,7 +202,7 @@ const AlunosTable: React.FC = () => {
                         <td className='text-base border text-center'>{aluno.nome}</td>
                         <td className='text-base border text-center'>{aluno.matricula}</td>
                         <td className='text-base border text-center'>
-                          {Series.filter((serieObj) => serieObj['value'] === aluno.serie)[0]['label']}
+                          {Turmas.filter((turmaObj) => turmaObj['value'] === aluno.turma)[0]['label']}
                         </td>
                         <td className='flex flex-row w-full h-[8vh] justify-center'>
                           {
@@ -212,7 +213,7 @@ const AlunosTable: React.FC = () => {
                                   handleDeleteAlunoRequest(aluno.matricula).then(
                                     () => {
                                       handleRequest();
-                                      handleTotalAlunosRequest(filterSelectedSeries);
+                                      handleTotalAlunosRequest(filterSelectedTurmas);
                                       setShowConfirm(!ShowConfirm);
                                     }
                                   );

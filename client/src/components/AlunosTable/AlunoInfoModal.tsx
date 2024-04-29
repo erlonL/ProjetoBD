@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import modalStyles from '../../utils/ModalStyles'
-import AlunoInfo from "../../utils/AlunoInfoRequests";
-import Series from '../../utils/Series';
-import AlunoIMG from '../../utils/AlunoIMGRequests';
+import AlunoInfo from "../../utils/Aluno/AlunoInfoRequests";
+import Turmas from '../../utils/Aluno/Turmas';
+import AlunoIMG from '../../utils/Aluno/AlunoIMGRequests';
 
-import AlunoInfoObject from '../../utils/AlunoInfoInterface';
+import AlunoInfoObject from '../../utils/Aluno/AlunoInfoInterface';
 
 interface AlunoInfoModalProps {
   isOpen: boolean;
@@ -21,12 +21,12 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
 
   const MATRICULA = AlunoInfoObject.matricula;
   const [updNome, setUpdNome] = useState(AlunoInfoObject.nome);
-  const [updSerie, setUpdSerie] = useState(AlunoInfoObject.serie);
+  const [updTurma, setUpdTurma] = useState(AlunoInfoObject.turma);
   const [updCpf, setUpdCpf] = useState(AlunoInfoObject.cpf);
   const [updImg_url, setUpdImg_url] = useState(AlunoInfoObject.img_url);
 
   const [editName, setEditName] = useState(false);
-  const [editSerie, setEditSerie] = useState(false);
+  const [editTurma, setEditTurma] = useState(false);
   const [editCpf, setEditCpf] = useState(false);
   const [editImg, setEditImg] = useState(false);
 
@@ -50,13 +50,13 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
         setAlunoModalInfo({
           matricula: matricula,
           nome: updNome,
-          serie: updSerie,
+          turma: updTurma,
           cpf: updCpf,
           img_url: imgURL
         })
       }).then(() => {
         setEditName(false);
-        setEditSerie(false);
+        setEditTurma(false);
         setEditCpf(false);
         setEditImg(false);
       })
@@ -75,13 +75,13 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
         setAlunoModalInfo({
           matricula: matricula,
           nome: updNome,
-          serie: updSerie,
+          turma: updTurma,
           cpf: updCpf,
           img_url: imgURL
         })
       }).then(() => {
         setEditName(false);
-        setEditSerie(false);
+        setEditTurma(false);
         setEditCpf(false);
         setEditImg(false);
       })
@@ -101,7 +101,7 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
 
   const handleInfoClose = () => {
     setEditName(false);
-    setEditSerie(false);
+    setEditTurma(false);
     setEditCpf(false);
     setEditImg(false);
   };
@@ -109,7 +109,7 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
   const discardChanges = () => {
     setUpdNome(AlunoInfoObject.nome);
     setUpdCpf(AlunoInfoObject.cpf);
-    setUpdSerie(AlunoInfoObject.serie);
+    setUpdTurma(AlunoInfoObject.turma);
     setUpdImg_url(AlunoInfoObject.img_url);
   }
 
@@ -141,11 +141,11 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
 
                     setUpdNome(updNome);
                     setUpdCpf(updCpf);
-                    setUpdSerie(updSerie);
+                    setUpdTurma(updTurma);
 
                     setEditName(false);
                     setEditCpf(false);
-                    setEditSerie(false);
+                    setEditTurma(false);
                 }}>
                 <span className="icon-[carbon--camera] w-full h-full"></span>
             </button>
@@ -166,7 +166,7 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                               setEditImg(false);
                               setEditName(false);
                               setEditCpf(false);
-                              setEditSerie(false);
+                              setEditTurma(false);
                             }}>
                             <span className="icon-[gravity-ui--circle-check-fill] w-full h-full text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
                           </button>
@@ -208,7 +208,7 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                             className='w-[10%] h-full p-1 bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'
                             onClick={() => {
                               setEditCpf(false);
-                              setEditSerie(false);
+                              setEditTurma(false);
                               setEditName(false); 
                             }}>
                               <span className="icon-[gravity-ui--check] text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
@@ -222,11 +222,11 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                         setEditName(true);
 
                         setUpdCpf(updCpf);
-                        setUpdSerie(updSerie);
+                        setUpdTurma(updTurma);
                         
                         setEditCpf(false);
-                        setEditSerie(false);
-                        // setUpdSerie(Series.filter((serieObj) => serieObj['value'] === updSerie)[0]['label'])
+                        setEditTurma(false);
+                        // setUpdTurma(Turmas.filter((turmaObj) => turmaObj['value'] === updTurma)[0]['label'])
                         }}
                         className='w-[10%] h-full p-1 bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'>
                         <span className="icon-[gravity-ui--pencil-to-square] text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
@@ -243,16 +243,16 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                     </label>
                     </div>
                     {
-                    editSerie ? (
+                    editTurma ? (
                       <>
-                        <select id='input-serie'
+                        <select id='input-turma'
                         className='bg-gradient-to-r from-[#747C87] from-90% to-[#25251D] text-[#FFFFFF] sm:rounded-lg rounded-none min-w-fit font-normal text-2xl shadow-[inset_0_-1px_4px_rgba(0,0,0,0.4)]' 
-                        value={updSerie} 
-                        onChange={(e) => { setUpdSerie(e.target.value); }}>
-                            {Series.slice(1).map((serieObj) => (
+                        value={updTurma} 
+                        onChange={(e) => { setUpdTurma(e.target.value); }}>
+                            {Turmas.slice(1).map((turmaObj) => (
                               
-                              <option className='text-lg font-normal' key={serieObj['label']} value={serieObj['value']}>
-                                {serieObj['label']}
+                              <option className='text-lg font-normal' key={turmaObj['label']} value={turmaObj['value']}>
+                                {turmaObj['label']}
                             </option>
                             ))}
                         </select>
@@ -260,19 +260,19 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                             className='w-[10%] h-full p-1 bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'
                             onClick={() => {
                               setEditCpf(false);
-                              setEditSerie(false);
+                              setEditTurma(false);
                               setEditName(false); 
                             }}>
                             <span className="icon-[gravity-ui--check] text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
                         </button>
                       </>
                     ) : (
-                            AlunoModalInfo.serie !== '' ? (
+                            AlunoModalInfo.turma !== '' ? (
                             <>
-                                <h3 className='md:text-2xl text-[24px] font-serif text-[#292a2b]'>{Series.filter((serieObj) => serieObj['value'] === updSerie)[0]['label']}</h3>
+                                <h3 className='md:text-2xl text-[24px] font-serif text-[#292a2b]'>{Turmas.filter((turmaObj) => turmaObj['value'] === updTurma)[0]['label']}</h3>
                                 <button
                                 onClick={() => {
-                                    setEditSerie(true);
+                                    setEditTurma(true);
                                     setEditName(false);
                                     setEditCpf(false); 
 
@@ -311,7 +311,7 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                             className='w-[10%] h-full p-1 bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'
                             onClick={() => {
                               setEditCpf(false);
-                              setEditSerie(false);
+                              setEditTurma(false);
                               setEditName(false); 
                             }}>
                             <span className="icon-[gravity-ui--check] text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
@@ -324,7 +324,7 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                             className='w-[10%] h-full p-1 bg-[#25251D] rounded-lg -sm:rounded-none group transition duration-75'
                             onClick={() => {
                             setEditCpf(true);
-                            setEditSerie(false);
+                            setEditTurma(false);
                             setEditName(false); 
                             }}>
                             <span className="icon-[gravity-ui--pencil-to-square] text-white group-hover:text-[#CCCCA5] transition duration-75"></span>
@@ -374,7 +374,7 @@ const AlunoInfoModal: React.FC<AlunoInfoModalProps> = ({ isOpen, CloseModal, Alu
                 onClick={(e) => {
                 e.preventDefault();
                 console.log(`Updating alunoInfo ${MATRICULA}`);
-                const data = { nome: updNome, cpf: updCpf, serie: updSerie};
+                const data = { nome: updNome, cpf: updCpf, turma: updTurma};
                 
                 handleUpdateAlunoInfoRequest(MATRICULA, data).then(() => {
                     handleAlunoImageUpdateRequest(MATRICULA, updImg_url);

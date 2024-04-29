@@ -16,22 +16,22 @@ async function populateDatabase(){
             console.log('Data already inserted')
             return
         }
-        await pool.query(`INSERT INTO Alunos (cpf, nome, serie) VALUES
-        ('111.222.333-45', 'Everton Ribeiro', 'F1'),
-        ('222.333.444-56', 'Gabriel Barbosa', 'F2'),
-        ('333.444.555-67', 'Bruno Henrique', 'F3'),
-        ('444.555.666-78', 'Diego Ribas', 'F4'),
-        ('555.666.777-89', 'Arrascaeta', 'F5'),
-        ('666.777.888-90', 'Michael', 'F6'),
-        ('777.888.999-01', 'Pedro', 'F7'),
-        ('888.999.000-12', 'Gerson', 'F8'),
-        ('999.000.111-23', 'Filipe Luís', 'F9'),
-        ('000.111.222-34', 'Hugo Souza', 'M1'),
-        ('112.222.333-45', 'Rodrigo Caio', 'M2'),
-        ('223.333.444-56', 'Willian Arão', 'M3');`)
+        await pool.query(`INSERT INTO Alunos (cpf_aluno, nome_aluno, turma) VALUES
+        ('111.222.333-45', 'Everton Ribeiro', 'T1'),
+        ('222.333.444-56', 'Gabriel Barbosa', 'T2'),
+        ('333.444.555-67', 'Bruno Henrique', 'T3'),
+        ('444.555.666-78', 'Diego Ribas', 'T1'),
+        ('555.666.777-89', 'Arrascaeta', 'T2'),
+        ('666.777.888-90', 'Michael', 'T3'),
+        ('777.888.999-01', 'Pedro', 'T1'),
+        ('888.999.000-12', 'Gerson', 'T2'),
+        ('999.000.111-23', 'Filipe Luís', 'T3'),
+        ('000.111.222-34', 'Hugo Souza', 'T1'),
+        ('112.222.333-45', 'Rodrigo Caio', 'T2'),
+        ('223.333.444-56', 'Willian Arão', 'T3');`)
         console.log('Alunos Data inserted successfully')
 
-        await pool.query(`INSERT INTO ProfileImages (matricula, url) VALUES
+        await pool.query(`INSERT INTO AlunosProfileImages (matricula_aluno_frn, url) VALUES
         ('202401', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
         ('202402', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
         ('202403', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png'),
@@ -46,6 +46,48 @@ async function populateDatabase(){
         ('2024012', 'https://a.espncdn.com/i/teamlogos/soccer/500/819.png');`)
         console.log('ProfileImages Data inserted successfully')
 
+        await pool.query(`INSERT INTO Professores (nome_prof, cpf_prof, salario_prof, email_prof) VALUES
+        ('Jorge Jesus', '123.456.789-10', 10000.00, 'professor@conceicao.br'),
+        ('Rogério Ceni', '234.567.890-11', 9000.00, 'professor@conceicao.br'),
+        ('Renato Gaúcho', '345.678.901-12', 8000.00, 'professor@conceicao.br'),
+        ('Cuca', '456.789.012-13', 7000.00, 'professor@conceicao.br'),
+        ('Abel Ferreira', '567.890.123-14', 6000.00, 'professor@conceicao.br'),
+        ('Vanderlei Luxemburgo', '678.901.234-15', 5000.00, 'professor@conceicao.br');`)
+        console.log('Professores Data inserted successfully')
+
+        await pool.query(`INSERT INTO ProfessoresProfileImages (codigo_prof_frn, url) VALUES
+        ('2024001', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
+        ('2024002', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
+        ('2024003', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
+        ('2024004', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
+        ('2024005', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
+        ('2024006', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg');`)
+
+        await pool.query(`INSERT INTO Disciplinas (nome_disci, codigo_disci, codigo_prof_frn) VALUES
+        ('Matemática', 1, '2024001'),
+        ('Português', 2, '2024002'),
+        ('Geografia', 3, '2024003'),
+        ('História', 4, '2024004'),
+        ('Ciências', 5, '2024005'),
+        ('Inglês', 6, '2024006');`)
+        console.log('Disciplinas Data inserted successfully')
+
+        await pool.query(`INSERT INTO Matriculado (matricula_aluno_frn, codigo_disci_frn) VALUES
+        ('202401', 1),
+        ('202402', 2),
+        ('202403', 3),
+        ('202404', 4),
+        ('202405', 5),
+        ('202406', 6),
+        ('202407', 1),
+        ('202408', 2),
+        ('202409', 3),
+        ('2024010', 4),
+        ('2024011', 5),
+        ('2024012', 6);`)
+        console.log('Matriculado Data inserted successfully')
+
+
     } catch (error) {
         console.error('Error inserting data: ', error)
     }
@@ -55,36 +97,103 @@ async function createTable(){
     try {
         // Alunos table definition
         await pool.query(`CREATE TABLE IF NOT EXISTS Alunos (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            matricula VARCHAR(191) NOT NULL UNIQUE,
-            cpf VARCHAR(191) NOT NULL UNIQUE,
-            nome VARCHAR(191) NOT NULL,
-            serie ENUM('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'M1', 'M2', 'M3') NOT NULL,
-            created TIMESTAMP NOT NULL DEFAULT NOW()
+            id_aluno INT AUTO_INCREMENT,
+            cpf_aluno VARCHAR(191) NOT NULL UNIQUE,
+            nome_aluno VARCHAR(191) NOT NULL,
+            turma ENUM('T1', 'T2', 'T3') NOT NULL,
+            matricula_aluno VARCHAR(191) NOT NULL UNIQUE,
+            created TIMESTAMP NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (id_aluno)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
         console.log('Table Alunos created successfully');
 
         // ProfileImages table definition
-        await pool.query(`CREATE TABLE IF NOT EXISTS ProfileImages (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            matricula VARCHAR(191) NOT NULL UNIQUE,
+        await pool.query(`CREATE TABLE IF NOT EXISTS AlunosProfileImages (
+            id INT AUTO_INCREMENT,
+            matricula_aluno_frn VARCHAR(191) NOT NULL UNIQUE,
             url TEXT NOT NULL,
-            created TIMESTAMP NOT NULL DEFAULT NOW()
+            created TIMESTAMP NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (id),
+            FOREIGN KEY (matricula_aluno_frn) REFERENCES Alunos(matricula_aluno) ON DELETE CASCADE
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
         console.log('Table ProfileImages created successfully');
 
-        // trigger for 'matricula' automatic creation
+        // trigger for 'matricula_aluno' automatic creation
         await pool.query(`
-        CREATE TRIGGER create_matricula BEFORE INSERT ON Alunos
+        CREATE TRIGGER create_matricula_aluno BEFORE INSERT ON Alunos
         FOR EACH ROW
         BEGIN
             DECLARE db_id INT;
-            SELECT id INTO db_id FROM Alunos ORDER BY id DESC LIMIT 1;
+            SELECT id_aluno INTO db_id FROM Alunos ORDER BY id_aluno DESC LIMIT 1;
             IF db_id IS NULL THEN
                 SET db_id = 0;
             END IF;
-            SET NEW.matricula = CONCAT('20240', db_id + 1);
-        END;`)
+            SET NEW.matricula_aluno = CONCAT('20240', db_id + 1);
+        END;`);
+        console.log('Trigger create_matricula created successfully')
+
+        // Professores table definition
+        await pool.query(`
+        CREATE TABLE IF NOT EXISTS Professores (
+            id_prof INT AUTO_INCREMENT,
+            nome_prof VARCHAR(191) NOT NULL,
+            cpf_prof VARCHAR(191) NOT NULL UNIQUE,
+            salario_prof DECIMAL(10, 2) NOT NULL,
+            email_prof VARCHAR(191),
+            codigo_prof VARCHAR(191) NOT NULL UNIQUE,
+            created TIMESTAMP NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (id_prof)
+        ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+        console.log('Table Professores created successfully');
+
+        // ProfessoresProfileImages table definition
+        await pool.query(`
+        CREATE TABLE IF NOT EXISTS ProfessoresProfileImages (
+            id INT AUTO_INCREMENT,
+            codigo_prof_frn VARCHAR(191) NOT NULL UNIQUE,
+            url TEXT NOT NULL,
+            created TIMESTAMP NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (id),
+            FOREIGN KEY (codigo_prof_frn) REFERENCES Professores(codigo_prof) ON DELETE CASCADE
+        ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+
+        // trigger for 'codigo_prof' automatic creation
+        await pool.query(`
+        CREATE TRIGGER create_codigo_prof BEFORE INSERT ON Professores
+            FOR EACH ROW
+            BEGIN
+                DECLARE db_id INT;
+                SELECT id_prof INTO db_id FROM Professores ORDER BY id_prof DESC LIMIT 1;
+                IF db_id IS NULL THEN
+                    SET db_id = 0;
+                END IF;
+                SET NEW.codigo_prof = CONCAT('202400', db_id + 1);
+            END;`);
+        console.log('Trigger create_codigo created successfully')
+        
+        // Disciplinas table definition
+        await pool.query(`
+        CREATE TABLE IF NOT EXISTS Disciplinas (
+            nome_disci VARCHAR(191) NOT NULL,
+            codigo_disci INT NOT NULL UNIQUE,
+            codigo_prof_frn VARCHAR(191) NOT NULL,
+            PRIMARY KEY (codigo_disci),
+            FOREIGN KEY (codigo_prof_frn) REFERENCES Professores(codigo_prof) ON DELETE CASCADE
+        ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+        console.log('Table Disciplinas created successfully');
+
+        // Matriculado table definition
+        await pool.query(`
+        CREATE TABLE IF NOT EXISTS Matriculado (
+            id INT AUTO_INCREMENT,
+            matricula_aluno_frn VARCHAR(191) NOT NULL,
+            codigo_disci_frn INT NOT NULL,
+            PRIMARY KEY (id),
+            FOREIGN KEY (matricula_aluno_frn) REFERENCES Alunos(matricula_aluno) ON DELETE CASCADE,
+            FOREIGN KEY (codigo_disci_frn) REFERENCES Disciplinas(codigo_disci) ON DELETE CASCADE
+        ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+        console.log('Table Matriculado created successfully');
+
 
     } catch (error) {
         console.error('Error creating table: ', error)

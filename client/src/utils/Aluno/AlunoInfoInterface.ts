@@ -1,7 +1,7 @@
 interface AlunoInfoObject {
     nome: string;
     cpf: string;
-    serie: string;
+    turma: string;
     matricula: string;
     img_url: string;
   }

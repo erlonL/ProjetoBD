@@ -1,10 +1,10 @@
-import pool from '../db.js';
+import pool from '../../db.js';
 
 async function createAluno(req, res) {
     try{
-        const { nome, cpf, serie } = req.body;
+        const { nome, cpf, turma } = req.body;
 
-        const [alunoExists] = await pool.query("SELECT * FROM Alunos WHERE cpf = ?", [cpf]);
+        const [alunoExists] = await pool.query("SELECT * FROM Alunos WHERE cpf_aluno = ?", [cpf]);
 
         console.log(alunoExists)
         if(alunoExists.length > 0){
@@ -14,17 +14,11 @@ async function createAluno(req, res) {
             })
         }
 
-        const data = {
-            nome,
-            cpf,
-            serie
-        }
-
         const [aluno] = await pool.query(`
         INSERT INTO Alunos 
-        (cpf, nome, serie) 
+        (cpf_aluno, nome_aluno, turma) 
         VALUES (?, ?, ?)`, 
-        [cpf, nome, serie]);
+        [cpf, nome, turma]);
 
         if(aluno.affectedRows === 0){
             return res.status(400).json({
@@ -34,14 +28,11 @@ async function createAluno(req, res) {
         }
 
         const alunoMatricula = await pool.query(`
-        SELECT matricula FROM Alunos
-        WHERE cpf = ?`, [cpf]);
+        SELECT matricula_aluno FROM Alunos
+        WHERE cpf_aluno = ?`, [cpf]);
         
         return res.status(201).json({
-            matricula: alunoMatricula[0][0].matricula,
-            nome,
-            cpf,
-            serie
+            matricula: alunoMatricula[0][0].matricula_aluno
         });
         
     }catch(error){
@@ -55,23 +46,38 @@ async function createAluno(req, res) {
 async function listAlunos(req, res) {
     try{
         const { page = 1 } = req.query;
-        const { serie } = req.query;
+        const { turma } = req.query;
         const limit = 12;
 
-        if(serie === 'ALL'){
-            const [alunos] = await pool.query(`
-            SELECT matricula, nome, serie FROM Alunos
-            ORDER BY nome ASC
+        if(turma === 'ALL'){
+            const [response] = await pool.query(`
+            SELECT matricula_aluno, nome_aluno, turma FROM Alunos
+            ORDER BY nome_aluno ASC
             LIMIT ?, ?`, [(page - 1) * limit, limit]);
-
+            
+            const alunos = response.map(aluno => {
+                return {
+                    matricula: aluno.matricula_aluno,
+                    nome: aluno.nome_aluno,
+                    turma: aluno.turma
+                }
+            })
             return res.json(alunos);
         }
 
-        const [alunos] = await pool.query(`
-        SELECT matricula, nome, serie FROM Alunos
-        WHERE serie = ?
-        ORDER BY nome ASC
-        LIMIT ?, ?`, [serie, (page - 1) * limit, limit]);
+        const [response] = await pool.query(`
+        SELECT matricula_aluno, nome_aluno, turma FROM Alunos
+        WHERE turma = ?
+        ORDER BY nome_aluno ASC
+        LIMIT ?, ?`, [turma, (page - 1) * limit, limit]);
+
+        const alunos = response.map(aluno => {
+            return {
+                matricula: aluno.matricula_aluno,
+                nome: aluno.nome_aluno,
+                turma: aluno.turma
+            }
+        })
         
         return res.json(alunos);
     }catch(error){
@@ -84,8 +90,8 @@ async function listAlunos(req, res) {
 
 async function totalAlunos(req, res) {
     try{
-        const { serie } = req.query;
-        if (serie === 'ALL'){
+        const { turma } = req.query;
+        if (turma === 'ALL'){
             try{
                 const [total] = await pool.query("SELECT COUNT(*) as total FROM Alunos");
 
@@ -101,7 +107,7 @@ async function totalAlunos(req, res) {
         const [total] = await pool.query(`
         SELECT COUNT(*) as total 
         FROM Alunos
-        WHERE serie = ?`, [serie]);
+        WHERE turma = ?`, [turma]);
 
         return res.json(total[0].total);
     }catch(error){
@@ -115,34 +121,10 @@ async function totalAlunos(req, res) {
 async function deleteAluno(req, res) {
     try{
         const { matricula } = req.query;
-        const { id = null } = req.query;
-
-        if(id){
-            const [alunoExists] = await pool.query(`
-            SELECT * FROM Alunos
-            WHERE id = ?`, [id]);
-            
-            if(alunoExists.length === 0){
-                return res.status(404).json({
-                    error: true,
-                    message: "Aluno não encontrado"
-                })
-            }
-
-            const [deleted] = await pool.query(`
-            DELETE FROM Alunos
-            WHERE id = ?`, [id]);
-
-            if(deleted.affectedRows === 1){
-                return res.json({
-                    message: "Aluno deletado com sucesso"
-                })
-            }
-        }
-
+        
         const [alunoExists] = await pool.query(`
         SELECT * FROM Alunos
-        WHERE matricula = ?`, [matricula]);
+        WHERE matricula_aluno = ?`, [matricula]);
 
         if(alunoExists.length === 0){
             return res.status(404).json({
@@ -153,7 +135,7 @@ async function deleteAluno(req, res) {
 
         const [deleted] = await pool.query(`
         DELETE FROM Alunos
-        WHERE matricula = ?`, [matricula]);
+        WHERE matricula_aluno = ?`, [matricula]);
 
         if(deleted.affectedRows === 1){
             return res.json({
@@ -171,13 +153,13 @@ async function deleteAluno(req, res) {
 
 async function updateAluno(req, res) {
     try{
-        const { matricula } = req.params;
-        const { nome, cpf, serie} = req.body;
+        const { matricula } = req.query;
+        const { nome, cpf, turma} = req.body;
 
         const [alunoInfo] = await pool.query(`
         UPDATE Alunos
-        SET nome = ?, cpf = ?, serie = ?
-        WHERE matricula = ?`, [nome, cpf, serie, matricula]);
+        SET nome_aluno = ?, cpf_aluno = ?, turma = ?
+        WHERE matricula_aluno = ?`, [nome, cpf, turma, matricula]);
         
         if(alunoInfo.affectedRows === 1){
             return res.json({
@@ -198,7 +180,7 @@ async function findAluno(req, res) {
 
         const [aluno] = await pool.query(`
         SELECT * FROM Alunos
-        WHERE matricula = ?`, [matricula]);
+        WHERE matricula_aluno = ?`, [matricula]);
 
         if(aluno.length === 0){
             return res.status(404).json({
@@ -221,8 +203,8 @@ async function findAlunoMore(req, res){
         const { matricula } = req.params;
 
         const [alunoInfo] = await pool.query(`
-        SELECT matricula, cpf, nome, serie FROM Alunos
-        WHERE matricula = ?`, [matricula]);
+        SELECT matricula_aluno, cpf_aluno, nome_aluno, turma FROM Alunos
+        WHERE matricula_aluno = ?`, [matricula]);
 
         if(alunoInfo.length === 0){
             return res.status(404).json({
@@ -232,8 +214,8 @@ async function findAlunoMore(req, res){
         }
 
         var [alunoIMG] = await pool.query(`
-        SELECT url FROM ProfileImages
-        WHERE matricula = ?`, [matricula]);
+        SELECT url FROM AlunosProfileImages
+        WHERE matricula_aluno_frn = ?`, [matricula]);
 
         console.log(alunoIMG);
 
@@ -242,10 +224,10 @@ async function findAlunoMore(req, res){
         }
 
         const aluno = {
-            matricula: alunoInfo[0].matricula,
-            cpf: alunoInfo[0].cpf,
-            nome: alunoInfo[0].nome,
-            serie: alunoInfo[0].serie,
+            matricula: alunoInfo[0].matricula_aluno,
+            cpf: alunoInfo[0].cpf_aluno,
+            nome: alunoInfo[0].nome_aluno,
+            turma: alunoInfo[0].turma,
             img_url: alunoIMG[0].url
         }
 

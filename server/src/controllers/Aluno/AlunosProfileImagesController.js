@@ -1,12 +1,12 @@
-import pool from './../db.js'
+import pool from '../../db.js'
 
 async function getProfileImage(req, res){
     try{
         const { matricula } = req.params;
         
         const [image] = await pool.query(`
-        SELECT * FROM ProfileImages
-        WHERE matricula = ?`, [matricula]);
+        SELECT * FROM AlunosProfileImages
+        WHERE matricula_aluno_frn = ?`, [matricula]);
 
         if(image.length === 0){
             return res.status(404).json({
@@ -29,8 +29,8 @@ async function updateProfileImage(req, res){
         const { matricula, url } = req.body;
 
         const [imageExists] = await pool.query(`
-        SELECT * FROM ProfileImages
-        WHERE matricula = ?`, [matricula]);
+        SELECT * FROM AlunosProfileImages
+        WHERE matricula_aluno_frn = ?`, [matricula]);
 
         if(imageExists.length === 0){
             return res.status(404).json({
@@ -40,14 +40,13 @@ async function updateProfileImage(req, res){
         }
 
         const [updated] = await pool.query(`
-        UPDATE ProfileImages
+        UPDATE AlunosProfileImages
         SET url = ?
-        WHERE matricula = ?`, [url, matricula]);
+        WHERE matricula_aluno_frn = ?`, [url, matricula]);
 
         if(updated.affectedRows === 1){
             return res.json({
-                id: imageExists.id,
-                matricula: imageExists.matricula,
+                matricula: imageExists.matricula_aluno_frn,
                 url: url,
                 message: "Imagem atualizada com sucesso"
             })
@@ -69,8 +68,8 @@ async function deleteProfileImage(req, res){
 
         
         const profileImageExists = await pool.query(`
-        SELECT * FROM ProfileImages
-        WHERE matricula = ?`, [matricula]);
+        SELECT * FROM AlunosProfileImages
+        WHERE matricula_aluno_frn = ?`, [matricula]);
 
         if(profileImageExists.length === 0){
             return res.status(404).json({
@@ -80,8 +79,8 @@ async function deleteProfileImage(req, res){
         }
 
         const [deleted] = await pool.query(`
-        DELETE FROM ProfileImages
-        WHERE matricula = ?`, [matricula]);
+        DELETE FROM AlunosProfileImages
+        WHERE matricula_aluno_frn = ?`, [matricula]);
 
         if(deleted.affectedRows === 1){
             return res.json({
@@ -102,8 +101,8 @@ async function createProfileImage(req, res){
         const { matricula, url } = req.body;
 
         const [imageExists] = await pool.query(`
-        SELECT * FROM ProfileImages
-        WHERE matricula = ?`, [matricula]);
+        SELECT * FROM AlunosProfileImages
+        WHERE matricula_aluno_frn = ?`, [matricula]);
 
         if(imageExists.length > 0){
             return res.status(400).json({
@@ -113,7 +112,7 @@ async function createProfileImage(req, res){
         }
 
         const [created] = await pool.query(`
-        INSERT INTO ProfileImages (matricula, url)
+        INSERT INTO AlunosProfileImages (matricula_aluno_frn, url)
         VALUES (?, ?)`, [matricula, url]);
 
         if(created.affectedRows === 1){
@@ -131,11 +130,11 @@ async function createProfileImage(req, res){
     }
 }
 
-const PIMGController = {
+const AlunosPIMGController = {
     getProfileImage,
     updateProfileImage,
     deleteProfileImage,
     createProfileImage
 }
 
-export default PIMGController;
+export default AlunosPIMGController;
