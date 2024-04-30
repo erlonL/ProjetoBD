@@ -48,7 +48,10 @@ const DisciplinaInfoModal: React.FC<DisciplinaInfoModalProps> = ({ isOpen, Close
         {/*BASIC DATA*/}
         <div id='DisciplinaInfo' className='flex flex-col w-full h-fit'>
           <div className='flex flex-col justify-center items-center'>
-            <h3 className='text-[36px] text-[#292a2b] font-bold'>Professor Associado</h3>
+            <h3 className='w-full px-4 mb-8 flex items-center justify-center text-[48px] text-[#cd ] font-bold shadow-[inset_0_0px_10px_rgba(0,0,0,0.6)] border border-black'>
+              {nome}
+            </h3>
+            <h3 className='text-[36px] text-[#292a2b] font-serif'>Professor Associado</h3>
             <div className='flex flex-col justify-center items-center bg-[#828891] shadow-[inset_0_0px_10px_rgba(0,0,0,0.6)] border border-black'>
               <img className='object-fill max-w-[20vw] max-h-[20vh] my-2' src={professor.url} alt="professor img" />
               <div className='flex flex-col space-y-1 p-2 items-center'>
@@ -59,7 +62,7 @@ const DisciplinaInfoModal: React.FC<DisciplinaInfoModalProps> = ({ isOpen, Close
 
             </div>
 
-            <h3 className='text-[36px] text-[#292a2b] font-bold mt-8'>Alunos</h3>
+            <h3 className='text-[36px] text-[#292a2b] font-serif mt-8'>Alunos</h3>
             <div className='grid grid-cols-5 gap-4 space-y-1 mb-12'>
               {alunos.map((aluno) => {
                 const aluno_turma = Turmas.filter((turmaObj) => turmaObj['value'] === aluno.turma)[0]['label'];

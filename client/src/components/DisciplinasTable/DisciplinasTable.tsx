@@ -305,15 +305,6 @@ const DisciplinasTable: React.FC = () => {
                                 >
                                   <span className="icon-[gravity-ui--square-list-ul] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
                                 </button>
-                                {/*open disciplina delete confirmation*/}
-                                <button className='bg-[#14181d] group transition duration-150 w-[4vw] h-[4vh] lg:w-[2vw] p-1 mx-1 my-2 rounded-lg' onClick={() => {
-                                  setSelectedCodigo(disciplina.codigo);
-                                  setSaveOption(false);
-                                  setShowConfirm(true);
-                                  console.log('Deletando disciplina...');
-                                }} >
-                                  <span className="icon-[gravity-ui--trash-bin] w-full h-full text-white group-hover:text-[#CCCCA5]"></span>
-                                </button>
                               </div>
                             </>
                           }

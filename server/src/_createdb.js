@@ -47,21 +47,21 @@ async function populateDatabase(){
         console.log('ProfileImages Data inserted successfully')
 
         await pool.query(`INSERT INTO Professores (nome_prof, cpf_prof, salario_prof, email_prof) VALUES
-        ('Jorge Jesus', '123.456.789-10', 10000.00, 'professor@conceicao.br'),
-        ('Rogério Ceni', '234.567.890-11', 9000.00, 'professor@conceicao.br'),
-        ('Renato Gaúcho', '345.678.901-12', 8000.00, 'professor@conceicao.br'),
-        ('Cuca', '456.789.012-13', 7000.00, 'professor@conceicao.br'),
-        ('Abel Ferreira', '567.890.123-14', 6000.00, 'professor@conceicao.br'),
-        ('Vanderlei Luxemburgo', '678.901.234-15', 5000.00, 'professor@conceicao.br');`)
+        ('Jorge Jesus', '123.456.789-10', 10000.00, 'JorgeJ@conceicao.br'),
+        ('Jorge Sampaoli', '234.567.890-11', 9000.00, 'JorgeS@conceicao.br'),
+        ('Tite', '345.678.901-12', 8000.00, 'tite@conceicao.br'),
+        ('Cuca', '456.789.012-13', 7000.00, 'cucar@conceicao.br'),
+        ('Dorival Júnior', '567.890.123-14', 6000.00, 'dorival@conceicao.br'),
+        ('Rogério Ceni', '678.901.234-15', 5000.00, 'rogerio@conceicao.br');`)
         console.log('Professores Data inserted successfully')
 
         await pool.query(`INSERT INTO ProfessoresProfileImages (codigo_prof_frn, url) VALUES
-        ('2024001', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
-        ('2024002', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
-        ('2024003', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
-        ('2024004', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
-        ('2024005', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg'),
-        ('2024006', 'https://revistaensinosuperior.com.br/wp-content/uploads/2019/09/leandro-karnal-universidades.jpg');`)
+        ('2024001', 'https://ogimg.infoglobo.com.br/in/24459012-d9f-eb8/FT1086A/JORGE-JESUS.jpg'),
+        ('2024002', 'https://bolavip.com/__export/1681487732759/sites/bolavip/img/2023/04/14/sampaoli-flamengo-_crop1681487731632.jpg_242310155.jpg'),
+        ('2024003', 'https://colunadofla.com/wp-content/uploads/2024/04/tite-flamengo-millonarios.jpg'),
+        ('2024004', 'https://static.flaresenha.com/wp/cuca-afirma-nao-ter-recebido-contato-do-flamengo-ate-o-momento-1.jpg'),
+        ('2024005', 'https://conteudo.imguol.com.br/c/esporte/1f/2018/10/13/tecnico-dorival-junior-comanda-o-flamengo-no-fla-flu-do-campeonato-brasileiro-1539463065650_v2_3x4.jpg'),
+        ('2024006', 'https://conteudo.imguol.com.br/c/esporte/f9/2020/11/21/tecnico-rogerio-ceni-no-duelo-entre-flamengo-e-coritiba-no-maracana-1605998794388_v2_4x3.jpg');`)
 
         await pool.query(`INSERT INTO Disciplinas (nome_disci, codigo_disci, codigo_prof_frn) VALUES
         ('Matemática', 1, '2024001'),
@@ -74,77 +74,54 @@ async function populateDatabase(){
 
         await pool.query(`INSERT INTO Matriculado (matricula_aluno_frn, codigo_disci_frn) VALUES
         ('202401', 1),
-        ('202402', 2),
-        ('202403', 3),
-        ('202404', 4),
-        ('202405', 5),
-        ('202406', 6),
-        ('202407', 1),
-        ('202408', 2),
-        ('202409', 3),
-        ('2024010', 4),
-        ('2024011', 5),
-        ('2024012', 6),
         ('202401', 2),
         ('202401', 3),
         ('202401', 4),
         ('202401', 5),
         ('202401', 6),
         ('202402', 1),
+        ('202402', 2),
         ('202402', 3),
         ('202402', 4),
         ('202402', 5),
         ('202402', 6),
         ('202403', 1),
         ('202403', 2),
+        ('202403', 3),
         ('202403', 4),
         ('202403', 5),
         ('202403', 6),
         ('202404', 1),
         ('202404', 2),
-        ('202404', 3),
+        ('202404', 4),
         ('202404', 5),
         ('202404', 6),
         ('202405', 1),
         ('202405', 2),
         ('202405', 3),
         ('202405', 4),
-        ('202405', 6),
         ('202406', 1),
         ('202406', 2),
         ('202406', 3),
         ('202406', 4),
         ('202406', 5),
+        ('202406', 6),
         ('202407', 1),
         ('202407', 2),
-        ('202407', 3),
-        ('202407', 4),
-        ('202407', 5),
-        ('202408', 1),
         ('202408', 2),
         ('202408', 3),
         ('202408', 4),
         ('202408', 5),
+        ('202408', 6),
         ('202409', 1),
         ('202409', 2),
         ('202409', 3),
         ('202409', 4),
-        ('202409', 5),
-        ('2024010', 1),
-        ('2024010', 2),
-        ('2024010', 3),
         ('2024010', 4),
         ('2024010', 5),
-        ('2024011', 1),
-        ('2024011', 2),
-        ('2024011', 3),
+        ('2024010', 6),
         ('2024011', 4),
-        ('2024011', 5),
-        ('2024012', 1),
-        ('2024012', 2),
-        ('2024012', 3),
-        ('2024012', 4),
-        ('2024012', 5);`)
+        ('2024011', 5)`)
         console.log('Matriculado Data inserted successfully')
 
 
@@ -180,7 +157,7 @@ async function createTable(){
 
         // trigger for 'matricula_aluno' automatic creation
         await pool.query(`
-        CREATE TRIGGER create_matricula_aluno BEFORE INSERT ON Alunos
+        CREATE TRIGGER IF NOT EXISTS create_matricula_aluno BEFORE INSERT ON Alunos
         FOR EACH ROW
         BEGIN
             DECLARE db_id INT;
@@ -219,7 +196,7 @@ async function createTable(){
 
         // trigger for 'codigo_prof' automatic creation
         await pool.query(`
-        CREATE TRIGGER create_codigo_prof BEFORE INSERT ON Professores
+        CREATE TRIGGER IF NOT EXISTS create_codigo_prof BEFORE INSERT ON Professores
             FOR EACH ROW
             BEGIN
                 DECLARE db_id INT;
